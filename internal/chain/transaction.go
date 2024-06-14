@@ -3,14 +3,12 @@ package chain
 import (
 	"context"
 	"crypto/ecdsa"
-	"fmt"
 	"math/big"
 	"strings"
 	"sync/atomic"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -100,16 +98,16 @@ func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (c
 	publicKey := b.privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		log.Fatal("cannot assert type: publicKey is not of type *ecdsa.PublicKey")
+		log.Fatal("Invalid type: publicKey is not of type *ecdsa.PublicKey")
 	}
 
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := b.client.PendingNonceAt(context.Background(), fromAddress)
+	nonce, err := b.client.PendingNonceAt(ctx, fromAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	gasPrice, err := b.client.SuggestGasPrice(context.Background())
+	gasPrice, err := b.client.SuggestGasPrice(ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -121,13 +119,9 @@ func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (c
 	hash := sha3.NewLegacyKeccak256()
 	hash.Write(transferFnSignature)
 	methodID := hash.Sum(nil)[:4]
-	fmt.Println(hexutil.Encode(methodID))
 
-	paddedAddress := common.LeftPadBytes(toAddress.Bytes(), 32)
-	fmt.Println(hexutil.Encode(paddedAddress))
-
-	paddedAmount := common.LeftPadBytes(value.Bytes(), 32)
-	fmt.Println(hexutil.Encode(paddedAmount))
+	paddedAddress := addLeftPadding(toAddress.Bytes())
+	paddedAmount := addLeftPadding(value.Bytes())
 
 	var data []byte
 	data = append(data, methodID...)
@@ -138,17 +132,16 @@ func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (c
 
 	tx := types.NewTransaction(nonce, tokenAddress, big.NewInt(0), gasLimit, gasPrice, data)
 
-	signedTx, err := types.SignTx(tx, types.NewEIP155Signer(b.chainID), b.privateKey)
+	signedTx, err := types.SignTx(tx, b.signer, b.privateKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = b.client.SendTransaction(context.Background(), signedTx)
+	err = b.client.SendTransaction(ctx, signedTx)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("tx sent: %s", signedTx.Hash().Hex())
 	return signedTx.Hash(), nil
 }
 

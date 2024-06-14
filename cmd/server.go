@@ -12,8 +12,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/chainflag/eth-faucet/internal/chain"
-	"github.com/chainflag/eth-faucet/internal/server"
+	"github.com/LiskHQ/lsk-faucet/internal/chain"
+	"github.com/LiskHQ/lsk-faucet/internal/server"
 )
 
 var (
@@ -27,8 +27,8 @@ var (
 
 	payoutFlag   = flag.Int("faucet.amount", 1, "Number of Lisk to transfer per user request")
 	intervalFlag = flag.Int("faucet.minutes", 1440, "Number of minutes to wait between funding rounds")
-	netnameFlag  = flag.String("faucet.name", "testnet", "Network name to display on the frontend")
-	symbolFlag   = flag.String("faucet.symbol", "ETH", "Token symbol to display on the frontend")
+	netnameFlag  = flag.String("faucet.name", "sepolia", "Network name to display on the frontend")
+	symbolFlag   = flag.String("faucet.symbol", "LSK", "Token symbol to display on the frontend")
 
 	keyJSONFlag  = flag.String("wallet.keyjson", os.Getenv("KEYSTORE"), "Keystore file to fund user requests with")
 	keyPassFlag  = flag.String("wallet.keypass", "password.txt", "Passphrase text file to decrypt keystore")

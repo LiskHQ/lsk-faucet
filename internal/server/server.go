@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
 
-	"github.com/chainflag/eth-faucet/internal/chain"
-	"github.com/chainflag/eth-faucet/web"
+	"github.com/LiskHQ/lsk-faucet/internal/chain"
+	"github.com/LiskHQ/lsk-faucet/web"
 )
 
 type Server struct {

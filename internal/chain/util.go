@@ -26,3 +26,7 @@ func LSKToWei(amount int64) *big.Int {
 	lsk := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
 	return new(big.Int).Mul(big.NewInt(amount), lsk)
 }
+
+func addLeftPadding(input []byte) []byte {
+	return common.LeftPadBytes(input, 32)
+}
