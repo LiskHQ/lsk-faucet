@@ -17,14 +17,15 @@ import (
 )
 
 var (
-	appVersion = "v1.1.0"
-	chainIDMap = map[string]int{"goerli": 5, "sepolia": 11155111}
+	appVersion   = "v1.1.0"
+	chainIDMap   = map[string]int{"sepolia": 4202}
+	tokenAddress = flag.String("token-address", os.Getenv("LSK_TOKEN_ADDRESS"), "Contract address of LSK token")
 
 	httpPortFlag = flag.Int("httpport", 8080, "Listener port to serve HTTP connection")
 	proxyCntFlag = flag.Int("proxycount", 0, "Count of reverse proxies in front of the server")
 	versionFlag  = flag.Bool("version", false, "Print version number")
 
-	payoutFlag   = flag.Int("faucet.amount", 1, "Number of Ethers to transfer per user request")
+	payoutFlag   = flag.Int("faucet.amount", 1, "Number of Lisk to transfer per user request")
 	intervalFlag = flag.Int("faucet.minutes", 1440, "Number of minutes to wait between funding rounds")
 	netnameFlag  = flag.String("faucet.name", "testnet", "Network name to display on the frontend")
 	symbolFlag   = flag.String("faucet.symbol", "ETH", "Token symbol to display on the frontend")
@@ -32,7 +33,7 @@ var (
 	keyJSONFlag  = flag.String("wallet.keyjson", os.Getenv("KEYSTORE"), "Keystore file to fund user requests with")
 	keyPassFlag  = flag.String("wallet.keypass", "password.txt", "Passphrase text file to decrypt keystore")
 	privKeyFlag  = flag.String("wallet.privkey", os.Getenv("PRIVATE_KEY"), "Private key hex to fund user requests with")
-	providerFlag = flag.String("wallet.provider", os.Getenv("WEB3_PROVIDER"), "Endpoint for Ethereum JSON-RPC connection")
+	providerFlag = flag.String("wallet.provider", os.Getenv("WEB3_PROVIDER"), "Endpoint for Lisk JSON-RPC connection")
 
 	hcaptchaSiteKeyFlag = flag.String("hcaptcha.sitekey", os.Getenv("HCAPTCHA_SITEKEY"), "hCaptcha sitekey")
 	hcaptchaSecretFlag  = flag.String("hcaptcha.secret", os.Getenv("HCAPTCHA_SECRET"), "hCaptcha secret")
@@ -56,7 +57,7 @@ func Execute() {
 		chainID = big.NewInt(int64(value))
 	}
 
-	txBuilder, err := chain.NewTxBuilder(*providerFlag, privateKey, chainID)
+	txBuilder, err := chain.NewTxBuilder(*providerFlag, privateKey, *tokenAddress, chainID)
 	if err != nil {
 		panic(fmt.Errorf("cannot connect to web3 provider: %w", err))
 	}

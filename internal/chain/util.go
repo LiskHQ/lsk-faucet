@@ -21,3 +21,8 @@ func IsValidAddress(address string, checksummed bool) bool {
 	}
 	return !checksummed || common.HexToAddress(address).Hex() == address
 }
+
+func LSKToWei(amount int64) *big.Int {
+	lsk := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+	return new(big.Int).Mul(big.NewInt(amount), lsk)
+}
