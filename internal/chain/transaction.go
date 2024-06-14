@@ -3,10 +3,12 @@ package chain
 import (
 	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"math/big"
 	"strings"
 	"sync/atomic"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -98,18 +100,18 @@ func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (c
 	publicKey := b.privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		log.Fatal("Invalid type: publicKey is not of type *ecdsa.PublicKey")
+		return common.Hash{}, fmt.Errorf("invalid type: publicKey is not of type *ecdsa.PublicKey")
 	}
 
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 	nonce, err := b.client.PendingNonceAt(ctx, fromAddress)
 	if err != nil {
-		log.Fatal(err)
+		return common.Hash{}, err
 	}
 
 	gasPrice, err := b.client.SuggestGasPrice(ctx)
 	if err != nil {
-		log.Fatal(err)
+		return common.Hash{}, err
 	}
 
 	toAddress := common.HexToAddress(to)
@@ -128,18 +130,27 @@ func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (c
 	data = append(data, paddedAddress...)
 	data = append(data, paddedAmount...)
 
-	gasLimit := uint64(60000)
+	gasLimit, err := b.client.EstimateGas(ctx, ethereum.CallMsg{
+		To:   &tokenAddress,
+		Data: data,
+	})
+	if err != nil {
+		return common.Hash{}, err
+	}
 
 	tx := types.NewTransaction(nonce, tokenAddress, big.NewInt(0), gasLimit, gasPrice, data)
 
 	signedTx, err := types.SignTx(tx, b.signer, b.privateKey)
 	if err != nil {
-		log.Fatal(err)
+		return common.Hash{}, err
 	}
 
-	err = b.client.SendTransaction(ctx, signedTx)
-	if err != nil {
-		log.Fatal(err)
+	if err = b.client.SendTransaction(ctx, signedTx); err != nil {
+		log.Error("failed to send tx", "tx hash", signedTx.Hash().String(), "err", err)
+		if strings.Contains(err.Error(), "nonce") {
+			b.refreshNonce(context.Background())
+		}
+		return common.Hash{}, err
 	}
 
 	return signedTx.Hash(), nil
