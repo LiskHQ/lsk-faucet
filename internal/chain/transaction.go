@@ -20,7 +20,7 @@ import (
 
 type TxBuilder interface {
 	Sender() common.Address
-	Transfer(ctx context.Context, to string, value *big.Int) (common.Hash, error)
+	TransferETH(ctx context.Context, to string, value *big.Int) (common.Hash, error)
 	TransferLSK(ctx context.Context, to string, value *big.Int) (common.Hash, error)
 }
 
@@ -64,7 +64,7 @@ func (b *TxBuild) Sender() common.Address {
 	return b.fromAddress
 }
 
-func (b *TxBuild) Transfer(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
+func (b *TxBuild) TransferETH(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
 	gasLimit := uint64(21000)
 	gasPrice, err := b.client.SuggestGasPrice(ctx)
 	if err != nil {
@@ -97,21 +97,22 @@ func (b *TxBuild) Transfer(ctx context.Context, to string, value *big.Int) (comm
 }
 
 func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
+	emptyHash := common.Hash{}
 	publicKey := b.privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
-		return common.Hash{}, fmt.Errorf("invalid type: publicKey is not of type *ecdsa.PublicKey")
+		return emptyHash, fmt.Errorf("invalid type: publicKey is not of type *ecdsa.PublicKey")
 	}
 
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 	nonce, err := b.client.PendingNonceAt(ctx, fromAddress)
 	if err != nil {
-		return common.Hash{}, err
+		return emptyHash, err
 	}
 
 	gasPrice, err := b.client.SuggestGasPrice(ctx)
 	if err != nil {
-		return common.Hash{}, err
+		return emptyHash, err
 	}
 
 	toAddress := common.HexToAddress(to)
@@ -135,14 +136,14 @@ func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (c
 		Data: data,
 	})
 	if err != nil {
-		return common.Hash{}, err
+		return emptyHash, err
 	}
 
 	tx := types.NewTransaction(nonce, tokenAddress, big.NewInt(0), gasLimit, gasPrice, data)
 
 	signedTx, err := types.SignTx(tx, b.signer, b.privateKey)
 	if err != nil {
-		return common.Hash{}, err
+		return emptyHash, err
 	}
 
 	if err = b.client.SendTransaction(ctx, signedTx); err != nil {
@@ -150,7 +151,7 @@ func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (c
 		if strings.Contains(err.Error(), "nonce") {
 			b.refreshNonce(context.Background())
 		}
-		return common.Hash{}, err
+		return emptyHash, err
 	}
 
 	return signedTx.Hash(), nil

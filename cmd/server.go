@@ -19,7 +19,7 @@ import (
 var (
 	appVersion   = "v1.1.0"
 	chainIDMap   = map[string]int{"sepolia": 4202}
-	tokenAddress = flag.String("token-address", os.Getenv("LSK_TOKEN_ADDRESS"), "Contract address of LSK token")
+	tokenAddress = flag.String("token-address", os.Getenv("LSK_TOKEN_ADDRESS"), "Contract address of LSK token on the Lisk L2")
 
 	httpPortFlag = flag.Int("httpport", 8080, "Listener port to serve HTTP connection")
 	proxyCntFlag = flag.Int("proxycount", 0, "Count of reverse proxies in front of the server")
