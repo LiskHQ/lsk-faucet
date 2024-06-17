@@ -21,3 +21,12 @@ func IsValidAddress(address string, checksummed bool) bool {
 	}
 	return !checksummed || common.HexToAddress(address).Hex() == address
 }
+
+func LSKToWei(amount int64) *big.Int {
+	oneLskInWei := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+	return new(big.Int).Mul(big.NewInt(amount), oneLskInWei)
+}
+
+func addLeftPadding(input []byte) []byte {
+	return common.LeftPadBytes(input, 32)
+}

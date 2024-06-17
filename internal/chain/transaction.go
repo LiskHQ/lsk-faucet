@@ -3,32 +3,38 @@ package chain
 import (
 	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"math/big"
 	"strings"
 	"sync/atomic"
 
+	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/sha3"
 )
 
 type TxBuilder interface {
 	Sender() common.Address
-	Transfer(ctx context.Context, to string, value *big.Int) (common.Hash, error)
+	TransferETH(ctx context.Context, to string, value *big.Int) (common.Hash, error)
+	TransferLSK(ctx context.Context, to string, value *big.Int) (common.Hash, error)
 }
 
 type TxBuild struct {
-	client      bind.ContractTransactor
-	privateKey  *ecdsa.PrivateKey
-	signer      types.Signer
-	fromAddress common.Address
-	nonce       uint64
+	client       bind.ContractTransactor
+	privateKey   *ecdsa.PrivateKey
+	signer       types.Signer
+	fromAddress  common.Address
+	nonce        uint64
+	chainID      *big.Int
+	tokenAddress string
 }
 
-func NewTxBuilder(provider string, privateKey *ecdsa.PrivateKey, chainID *big.Int) (TxBuilder, error) {
+func NewTxBuilder(provider string, privateKey *ecdsa.PrivateKey, tokenAddress string, chainID *big.Int) (TxBuilder, error) {
 	client, err := ethclient.Dial(provider)
 	if err != nil {
 		return nil, err
@@ -42,10 +48,12 @@ func NewTxBuilder(provider string, privateKey *ecdsa.PrivateKey, chainID *big.In
 	}
 
 	txBuilder := &TxBuild{
-		client:      client,
-		privateKey:  privateKey,
-		signer:      types.NewEIP155Signer(chainID),
-		fromAddress: crypto.PubkeyToAddress(privateKey.PublicKey),
+		client:       client,
+		privateKey:   privateKey,
+		signer:       types.NewEIP155Signer(chainID),
+		fromAddress:  crypto.PubkeyToAddress(privateKey.PublicKey),
+		chainID:      chainID,
+		tokenAddress: tokenAddress,
 	}
 	txBuilder.refreshNonce(context.Background())
 
@@ -56,7 +64,7 @@ func (b *TxBuild) Sender() common.Address {
 	return b.fromAddress
 }
 
-func (b *TxBuild) Transfer(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
+func (b *TxBuild) TransferETH(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
 	gasLimit := uint64(21000)
 	gasPrice, err := b.client.SuggestGasPrice(ctx)
 	if err != nil {
@@ -83,6 +91,67 @@ func (b *TxBuild) Transfer(ctx context.Context, to string, value *big.Int) (comm
 			b.refreshNonce(context.Background())
 		}
 		return common.Hash{}, err
+	}
+
+	return signedTx.Hash(), nil
+}
+
+func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
+	emptyHash := common.Hash{}
+	publicKey := b.privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		return emptyHash, fmt.Errorf("invalid type: publicKey is not of type *ecdsa.PublicKey")
+	}
+
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	nonce, err := b.client.PendingNonceAt(ctx, fromAddress)
+	if err != nil {
+		return emptyHash, err
+	}
+
+	gasPrice, err := b.client.SuggestGasPrice(ctx)
+	if err != nil {
+		return emptyHash, err
+	}
+
+	toAddress := common.HexToAddress(to)
+	tokenAddress := common.HexToAddress(b.tokenAddress)
+
+	transferFnSignature := []byte("transfer(address,uint256)")
+	hash := sha3.NewLegacyKeccak256()
+	hash.Write(transferFnSignature)
+	methodID := hash.Sum(nil)[:4]
+
+	paddedAddress := addLeftPadding(toAddress.Bytes())
+	paddedAmount := addLeftPadding(value.Bytes())
+
+	var data []byte
+	data = append(data, methodID...)
+	data = append(data, paddedAddress...)
+	data = append(data, paddedAmount...)
+
+	gasLimit, err := b.client.EstimateGas(ctx, ethereum.CallMsg{
+		To:   &tokenAddress,
+		Data: data,
+	})
+	if err != nil {
+		return emptyHash, err
+	}
+
+	tx := types.NewTransaction(nonce, tokenAddress, big.NewInt(0), gasLimit, gasPrice, data)
+
+	signedTx, err := types.SignTx(tx, b.signer, b.privateKey)
+	if err != nil {
+		return emptyHash, err
+	}
+
+	if err = b.client.SendTransaction(ctx, signedTx); err != nil {
+		log.Error("failed to send tx", "tx hash", signedTx.Hash().String(), "err", err)
+		if strings.Contains(err.Error(), "nonce") {
+			b.refreshNonce(context.Background())
+		}
+		return emptyHash, err
 	}
 
 	return signedTx.Hash(), nil
