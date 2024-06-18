@@ -7,7 +7,7 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lsk-faucet)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lsk-faucet)
 
-LSK faucet is a web application to get Lisk (LSK) tokens on the Lisk Sepolia Testnet. The tokens can be used to test and troubleshoot your decentralized application or protocol before going live on the Lisk Mainnet.
+LSK faucet is a web application that can be configured and deployed to get custom ERC20 tokens on any network. The tokens can be used to test and troubleshoot your decentralized application or protocol before going live on the Mainnet.
 
 ## Features
 
@@ -32,11 +32,13 @@ cd lsk-faucet
 ```
 
 2. Bundle Frontend web with Vite
+Please make sure to replace token icon at `web/public/token.png` with the specific ERC20 token icon.
+
 ```bash
 go generate
 ```
 
-3. Build Go project 
+1. Build Go project 
 ```bash
 go build -o lsk-faucet
 ```
@@ -58,12 +60,12 @@ go build -o lsk-faucet
 ### Configuration
 Below is a list of environment variables that can be configured.
 
-- `WEB3_PROVIDER`: Endpoint for Lisk JSON-RPC connection.
+- `WEB3_PROVIDER`: RPC Endpoint to connect with the network.
 - `PRIVATE_KEY`: Private key hex to fund user requests with.
 - `KEYSTORE`: Keystore file to fund user requests with.
 - `HCAPTCHA_SITEKEY`: hCaptcha sitekey.
 - `HCAPTCHA_SECRET`: hCaptcha secret.
-- `LSK_TOKEN_ADDRESS`: Contract address of LSK token on the Lisk L2.
+- `ERC20_TOKEN_ADDRESS`: Contract address of ERC20 token on the above mentioned network, defaults to Lisk L2 token address.
 
 You can configure the funder by setting any of the following environment variable instead of command-line flags:
 ```bash
@@ -86,17 +88,17 @@ Then run the faucet application without the wallet command-line flags:
 
 The following are the available command-line flags(excluding above wallet flags):
 
-| Flag              | Description                                      | Default Value                              |
-| ----------------- | ------------------------------------------------ | ------------------------------------------ |
-| -httpport         | Listener port to serve HTTP connection           | 8080                                       |
-| -proxycount       | Count of reverse proxies in front of the server  | 0                                          |
-| -token-address    | Token contract address                           | 0x8a21CF9Ba08Ae709D64Cb25AfAA951183EC9FF6D |
-| -faucet.amount    | Number of LSK to transfer per user request       | 1                                          |
-| -faucet.minutes   | Number of minutes to wait between funding rounds | 10080 (1 week)                             |
-| -faucet.name      | Network name to display on the frontend          | sepolia                                    |
-| -faucet.symbol    | Token symbol to display on the frontend          | LSK                                        |
-| -hcaptcha.sitekey | hCaptcha sitekey                                 |                                            |
-| -hcaptcha.secret  | hCaptcha secret                                  |                                            |
+| Flag              | Description                                         | Default Value                              |
+| ----------------- | --------------------------------------------------- | ------------------------------------------ |
+| -httpport         | Listener port to serve HTTP connection              | 8080                                       |
+| -proxycount       | Count of reverse proxies in front of the server     | 0                                          |
+| -token-address    | Token contract address                              | 0x8a21CF9Ba08Ae709D64Cb25AfAA951183EC9FF6D |
+| -faucet.amount    | Number of ERC20 tokens to transfer per user request | 1                                          |
+| -faucet.minutes   | Number of minutes to wait between funding rounds    | 10080 (1 week)                             |
+| -faucet.name      | Network name to display on the frontend             | sepolia                                    |
+| -faucet.symbol    | Token symbol to display on the frontend             | LSK                                        |
+| -hcaptcha.sitekey | hCaptcha sitekey                                    |                                            |
+| -hcaptcha.secret  | hCaptcha secret                                     |                                            |
 
 ### Docker deployment
 #### Build docker image

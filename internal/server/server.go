@@ -55,7 +55,7 @@ func (s *Server) handleClaim() http.HandlerFunc {
 		address, _ := readAddress(r)
 		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 		defer cancel()
-		txHash, err := s.TransferLSK(ctx, address, chain.LSKToWei(int64(s.cfg.payout)))
+		txHash, err := s.TransferERC20(ctx, address, chain.LSKToWei(int64(s.cfg.payout)))
 		if err != nil {
 			log.WithError(err).Error("Failed to send transaction")
 			renderJSON(w, claimResponse{Message: err.Error()}, http.StatusInternalServerError)

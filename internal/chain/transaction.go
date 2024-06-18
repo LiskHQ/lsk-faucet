@@ -21,7 +21,7 @@ import (
 type TxBuilder interface {
 	Sender() common.Address
 	TransferETH(ctx context.Context, to string, value *big.Int) (common.Hash, error)
-	TransferLSK(ctx context.Context, to string, value *big.Int) (common.Hash, error)
+	TransferERC20(ctx context.Context, to string, value *big.Int) (common.Hash, error)
 }
 
 type TxBuild struct {
@@ -96,7 +96,7 @@ func (b *TxBuild) TransferETH(ctx context.Context, to string, value *big.Int) (c
 	return signedTx.Hash(), nil
 }
 
-func (b *TxBuild) TransferLSK(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
+func (b *TxBuild) TransferERC20(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
 	emptyHash := common.Hash{}
 	publicKey := b.privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
