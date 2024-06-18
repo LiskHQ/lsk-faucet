@@ -32,15 +32,16 @@ cd lsk-faucet
 ```
 
 2. Bundle Frontend web with Vite
-Please make sure to replace token icon at `web/public/token.png` with the specific ERC20 token icon.
+
+**NOTE**: Please make sure to replace token icon at `web/public/token.png` with the specific ERC20 token icon.
 
 ```bash
-go generate
+make build-frontend
 ```
 
-1. Build Go project 
+3. Build Go project 
 ```bash
-go build -o lsk-faucet
+make build-backend
 ```
 
 ## Usage
@@ -48,13 +49,13 @@ go build -o lsk-faucet
 **Use private key to fund users**
 
 ```bash
-./lsk-faucet -httpport 8080 -wallet.provider http://localhost:8545 -wallet.privkey privkey
+make run FLAGS="-httpport 8080 -wallet.provider http://localhost:8545 -wallet.privkey privkey"
 ```
 
 **Use keystore to fund users**
 
 ```bash
-./lsk-faucet -httpport 8080 -wallet.provider http://localhost:8545 -wallet.keyjson keystore -wallet.keypass password.txt
+make run FLAGS="-httpport 8080 -wallet.provider http://localhost:8545 -wallet.keyjson keystore -wallet.keypass password.txt"
 ```
 
 ### Configuration
@@ -81,7 +82,7 @@ echo "your keystore password" > `pwd`/password.txt
 
 Then run the faucet application without the wallet command-line flags:
 ```bash
-./lsk-faucet -httpport 8080
+make run FLAGS="-httpport 8080"
 ```
 
 **Optional Flags**
@@ -104,15 +105,14 @@ The following are the available command-line flags(excluding above wallet flags)
 #### Build docker image
 Run the following command to build docker image:
 ```bash
-docker build -t liskhq/lsk-faucet .
+make build
 ```
-
 
 #### Run faucet
 Run the following command to start the application:
 
 ```bash
-docker run -d -p 8080:8080 -e WEB3_PROVIDER=<rpc-endpoint> -e PRIVATE_KEY=<hex-private-key> liskhq/lsk-faucet
+make docker-start WEB3_PROVIDER=<rpc-endpoint> PRIVATE_KEY=<hex-private-key>
 
 ```
 **NOTE**: Please replace `<rpc-endpoint>` and `<hex-private-key>` with appropriate values.
@@ -120,7 +120,7 @@ docker run -d -p 8080:8080 -e WEB3_PROVIDER=<rpc-endpoint> -e PRIVATE_KEY=<hex-p
 or
 
 ```bash
-docker run -d -p 8080:8080 -e WEB3_PROVIDER=<rpc-endpoint> -e KEYSTORE=<keystore-path> -v `pwd`/keystore:/app/keystore -v `pwd`/password.txt:/app/password.txt liskhq/lsk-faucet
+make docker-start WEB3_PROVIDER=<rpc-endpoint> KEYSTORE=<keystore-path>
 ```
 
 **NOTE**: Please replace `<rpc-endpoint>` and `<keystore-path>` with appropriate values.
