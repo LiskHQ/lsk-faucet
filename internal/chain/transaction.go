@@ -149,7 +149,7 @@ func (b *TxBuild) TransferERC20(ctx context.Context, to string, value *big.Int) 
 	if err = b.client.SendTransaction(ctx, signedTx); err != nil {
 		log.Error("failed to send tx", "tx hash", signedTx.Hash().String(), "err", err)
 		if strings.Contains(err.Error(), "nonce") {
-			b.refreshNonce(context.Background())
+			b.refreshNonce(ctx)
 		}
 		return emptyHash, err
 	}

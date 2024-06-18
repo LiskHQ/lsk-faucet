@@ -14,7 +14,7 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient/simulated"
 )
 
-func TestTxBuilder(t *testing.T) {
+func TestTxBuilder_TransferETH(t *testing.T) {
 	privateKey, _ := crypto.HexToECDSA("976f9f7772781ff6d1c93941129d417c49a209c674056a3cf5e27e225ee55fa8")
 	fromAddress := crypto.PubkeyToAddress(privateKey.PublicKey)
 	simBackend := simulated.NewBackend(
