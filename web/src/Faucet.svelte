@@ -135,7 +135,7 @@
               <span class="navbar-item">
                 <a
                   class="button is-white is-outlined"
-                  href="https://github.com/chainflag/eth-faucet"
+                  href="https://github.com/liskhq/lsk-faucet"
                 >
                   <span class="icon">
                     <i class="fa fa-github" />
@@ -189,8 +189,8 @@
 <style>
   .hero.is-info {
     background:
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      url('/background.jpg') no-repeat center center fixed;
+      linear-gradient(rgba(0, 0, 0.5, 0), rgba(0, 0, 0.5, 0)),
+      url('/background.png') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
