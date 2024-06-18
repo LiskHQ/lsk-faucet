@@ -4,6 +4,8 @@ import (
 	"math/big"
 	"reflect"
 	"testing"
+
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func TestIsValidAddress(t *testing.T) {
@@ -44,6 +46,44 @@ func TestEtherToWei(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := EtherToWei(tt.amount); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("EtherToWei() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_LSKToWei(t *testing.T) {
+	tests := []struct {
+		name   string
+		amount int64
+		want   *big.Int
+	}{
+		{name: "Should convert 1 LSK to Wei", amount: 1, want: big.NewInt(1000000000000000000)},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := LSKToWei(tt.amount); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("LSKToWei() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_addLeftPadding(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []byte
+		want  []byte
+	}{
+		{
+			name:  "Should return padded input",
+			input: common.HexToAddress("0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B").Bytes(),
+			want:  common.LeftPadBytes(common.HexToAddress("0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B").Bytes(), 32),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := addLeftPadding(tt.input); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("addLeftPadding() = %v, want %v", got, tt.want)
 			}
 		})
 	}
