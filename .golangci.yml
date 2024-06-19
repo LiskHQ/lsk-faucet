@@ -1,6 +1,6 @@
 run:
   timeout: 5m
-  skip-dirs:
+  exclude-dirs:
     - .github
     - web
 
