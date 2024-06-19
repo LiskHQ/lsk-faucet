@@ -7,7 +7,7 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lsk-faucet)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lsk-faucet)
 
-LSK faucet is a web application to get Lisk (LSK) tokens on the Lisk Sepolia Testnet. The tokens can be used to test and troubleshoot your decentralized application or protocol before going live on the Lisk Mainnet.
+LSK faucet is a web application that can be configured and deployed to get ETH and custom ERC20 tokens on any test network. The tokens can be used to test and troubleshoot your decentralized application or protocol before going live on the Mainnet.
 
 ## Features
 
@@ -32,13 +32,16 @@ cd lsk-faucet
 ```
 
 2. Bundle Frontend web with Vite
+
+**NOTE**: Please make sure to update the token icon under `web/public/` with the specific ERC20 token icon. The file must be named `token.png`. We recommend the image dimensions to be 128px x 128px.
+
 ```bash
-go generate
+make build-frontend
 ```
 
 3. Build Go project 
 ```bash
-go build -o lsk-faucet
+make build-backend
 ```
 
 ## Usage
@@ -46,24 +49,24 @@ go build -o lsk-faucet
 **Use private key to fund users**
 
 ```bash
-./lsk-faucet -httpport 8080 -wallet.provider http://localhost:8545 -wallet.privkey privkey
+make run FLAGS="-httpport 8080 -wallet.provider http://localhost:8545 -wallet.privkey privkey"
 ```
 
 **Use keystore to fund users**
 
 ```bash
-./lsk-faucet -httpport 8080 -wallet.provider http://localhost:8545 -wallet.keyjson keystore -wallet.keypass password.txt
+make run FLAGS="-httpport 8080 -wallet.provider http://localhost:8545 -wallet.keyjson keystore -wallet.keypass password.txt"
 ```
 
 ### Configuration
 Below is a list of environment variables that can be configured.
 
-- `WEB3_PROVIDER`: Endpoint for Lisk JSON-RPC connection.
+- `WEB3_PROVIDER`: RPC Endpoint to connect with the network node.
 - `PRIVATE_KEY`: Private key hex to fund user requests with.
 - `KEYSTORE`: Keystore file to fund user requests with.
 - `HCAPTCHA_SITEKEY`: hCaptcha sitekey.
 - `HCAPTCHA_SECRET`: hCaptcha secret.
-- `LSK_TOKEN_ADDRESS`: Contract address of LSK token on the Lisk L2.
+- `ERC20_TOKEN_ADDRESS`: Contract address of the ERC20 token on the configured network, defaults to contract address for Lisk ERC20 tokens on Lisk Sepolia.
 
 You can configure the funder by setting any of the following environment variable instead of command-line flags:
 ```bash
@@ -79,38 +82,37 @@ echo "your keystore password" > `pwd`/password.txt
 
 Then run the faucet application without the wallet command-line flags:
 ```bash
-./lsk-faucet -httpport 8080
+make run FLAGS="-httpport 8080"
 ```
 
 **Optional Flags**
 
 The following are the available command-line flags(excluding above wallet flags):
 
-| Flag              | Description                                      | Default Value                              |
-| ----------------- | ------------------------------------------------ | ------------------------------------------ |
-| -httpport         | Listener port to serve HTTP connection           | 8080                                       |
-| -proxycount       | Count of reverse proxies in front of the server  | 0                                          |
-| -token-address    | Token contract address                           | 0x8a21CF9Ba08Ae709D64Cb25AfAA951183EC9FF6D |
-| -faucet.amount    | Number of LSK to transfer per user request       | 1                                          |
-| -faucet.minutes   | Number of minutes to wait between funding rounds | 10080 (1 week)                             |
-| -faucet.name      | Network name to display on the frontend          | sepolia                                    |
-| -faucet.symbol    | Token symbol to display on the frontend          | LSK                                        |
-| -hcaptcha.sitekey | hCaptcha sitekey                                 |                                            |
-| -hcaptcha.secret  | hCaptcha secret                                  |                                            |
+| Flag              | Description                                         | Default Value                              |
+| ----------------- | --------------------------------------------------- | ------------------------------------------ |
+| -httpport         | Listener port to serve HTTP connection              | 8080                                       |
+| -proxycount       | Count of reverse proxies in front of the server     | 0                                          |
+| -token-address    | Token contract address                              | 0x8a21CF9Ba08Ae709D64Cb25AfAA951183EC9FF6D |
+| -faucet.amount    | Number of ERC20 tokens to transfer per user request | 1                                          |
+| -faucet.minutes   | Number of minutes to wait between funding rounds    | 10080 (1 week)                             |
+| -faucet.name      | Network name to display on the frontend             | sepolia                                    |
+| -faucet.symbol    | Token symbol to display on the frontend             | LSK                                        |
+| -hcaptcha.sitekey | hCaptcha sitekey                                    |                                            |
+| -hcaptcha.secret  | hCaptcha secret                                     |                                            |
 
 ### Docker deployment
 #### Build docker image
 Run the following command to build docker image:
 ```bash
-docker build -t liskhq/lsk-faucet .
+make build
 ```
-
 
 #### Run faucet
 Run the following command to start the application:
 
 ```bash
-docker run -d -p 8080:8080 -e WEB3_PROVIDER=<rpc-endpoint> -e PRIVATE_KEY=<hex-private-key> liskhq/lsk-faucet
+make docker-start WEB3_PROVIDER=<rpc-endpoint> PRIVATE_KEY=<hex-private-key>
 
 ```
 **NOTE**: Please replace `<rpc-endpoint>` and `<hex-private-key>` with appropriate values.
@@ -118,7 +120,7 @@ docker run -d -p 8080:8080 -e WEB3_PROVIDER=<rpc-endpoint> -e PRIVATE_KEY=<hex-p
 or
 
 ```bash
-docker run -d -p 8080:8080 -e WEB3_PROVIDER=<rpc-endpoint> -e KEYSTORE=<keystore-path> -v `pwd`/keystore:/app/keystore -v `pwd`/password.txt:/app/password.txt liskhq/lsk-faucet
+make docker-start WEB3_PROVIDER=<rpc-endpoint> KEYSTORE=<keystore-path>
 ```
 
 **NOTE**: Please replace `<rpc-endpoint>` and `<keystore-path>` with appropriate values.

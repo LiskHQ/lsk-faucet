@@ -26,9 +26,7 @@
     hcaptchaLoaded = true;
   };
 
-  $: document.title = `${faucetInfo.symbol} ${capitalize(
-    faucetInfo.network,
-  )} Faucet`;
+  $: document.title = `${capitalize(faucetInfo.network)} Faucet`;
 
   let widgetID;
   $: if (mounted && hcaptchaLoaded) {
@@ -135,7 +133,7 @@
               <span class="navbar-item">
                 <a
                   class="button is-white is-outlined"
-                  href="https://github.com/chainflag/eth-faucet"
+                  href="https://github.com/liskhq/lsk-faucet"
                 >
                   <span class="icon">
                     <i class="fa fa-github" />
@@ -189,8 +187,8 @@
 <style>
   .hero.is-info {
     background:
-      linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-      url('/background.jpg') no-repeat center center fixed;
+      linear-gradient(180deg, rgba(14, 14, 40, 0.00) 0%, rgba(12, 21, 46, 0.25) 0%, rgba(35, 61, 135, 0.00) 49%, rgba(18, 27, 52, 0.40) 70.71%, rgba(16, 23, 43, 0.55) 79.18%, rgba(13, 22, 47, 0.70) 87.02%, #0C152E 93.58%, #0C152E 100%),
+      url('/background.png') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
