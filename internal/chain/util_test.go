@@ -57,7 +57,7 @@ func Test_LSKToWei(t *testing.T) {
 		amount int64
 		want   *big.Int
 	}{
-		{name: "Should convert 1 LSK to Wei", amount: 1, want: big.NewInt(1000000000000000000)},
+		{name: "should convert 1 LSK to 10^18 Wei", amount: 1, want: big.NewInt(1000000000000000000)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -75,7 +75,7 @@ func Test_addLeftPadding(t *testing.T) {
 		want  []byte
 	}{
 		{
-			name:  "Should return padded input",
+			name:  "should return padded input",
 			input: common.HexToAddress("0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B").Bytes(),
 			want:  common.LeftPadBytes(common.HexToAddress("0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B").Bytes(), 32),
 		},

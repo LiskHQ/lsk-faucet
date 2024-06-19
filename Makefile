@@ -10,12 +10,12 @@ build: build-frontend build-backend
 build-backend: # Builds the application and create a binary at ./bin/
 	@echo "$(BLUE)» Building $(APP_NAME) application binary... $(COLOR_END)"
 	@go build -a -o bin/$(APP_NAME) .
-	@echo "$(GREEN) Binary successfully built$(COLOR_END)"
+	@echo "$(GREEN)Binary successfully built$(COLOR_END)"
 
 build-frontend: # Builds the frontned application
 	@echo "$(BLUE)» Building frontend... $(COLOR_END)"
 	@go generate
-	@echo "$(GREEN) Frontend successfully built$(COLOR_END)"
+	@echo "$(GREEN)Frontend successfully built$(COLOR_END)"
 
 run: # Runs the application, use `make run FLAGS="--help"`
 	@./bin/${APP_NAME} ${FLAGS}

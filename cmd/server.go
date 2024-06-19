@@ -17,8 +17,9 @@ import (
 )
 
 var (
-	appVersion   = "v1.1.0"
-	chainIDMap   = map[string]int{"sepolia": 4202}
+	appVersion = "v1.1.0"
+	chainIDMap = map[string]int{"lisk_sepolia": 4202}
+
 	tokenAddress = flag.String("token-address", os.Getenv("ERC20_TOKEN_ADDRESS"), "Contract address of ERC20 token")
 
 	httpPortFlag = flag.Int("httpport", 8080, "Listener port to serve HTTP connection")
@@ -27,7 +28,7 @@ var (
 
 	payoutFlag   = flag.Int("faucet.amount", 1, "Number of ERC20 tokens to transfer per user request")
 	intervalFlag = flag.Int("faucet.minutes", 10080, "Number of minutes to wait between funding rounds")
-	netnameFlag  = flag.String("faucet.name", "sepolia", "Network name to display on the frontend")
+	netnameFlag  = flag.String("faucet.name", "lisk_sepolia", "Network name to display on the frontend")
 	symbolFlag   = flag.String("faucet.symbol", "LSK", "Token symbol to display on the frontend")
 
 	keyJSONFlag  = flag.String("wallet.keyjson", os.Getenv("KEYSTORE"), "Keystore file to fund user requests with")

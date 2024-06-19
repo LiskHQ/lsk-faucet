@@ -7,7 +7,7 @@
 ![GitHub issues](https://img.shields.io/github/issues-raw/liskhq/lsk-faucet)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed-raw/liskhq/lsk-faucet)
 
-LSK faucet is a web application that can be configured and deployed to get custom ERC20 tokens on any network. The tokens can be used to test and troubleshoot your decentralized application or protocol before going live on the Mainnet.
+LSK faucet is a web application that can be configured and deployed to get ETH and custom ERC20 tokens on any test network. The tokens can be used to test and troubleshoot your decentralized application or protocol before going live on the Mainnet.
 
 ## Features
 
@@ -33,7 +33,7 @@ cd lsk-faucet
 
 2. Bundle Frontend web with Vite
 
-**NOTE**: Please make sure to replace token icon at `web/public/token.png` with the specific ERC20 token icon.
+**NOTE**: Please make sure to update the token icon under `web/public/` with the specific ERC20 token icon. The file must be named `token.png`. We recommend the image dimensions to be 128px x 128px.
 
 ```bash
 make build-frontend
@@ -61,12 +61,12 @@ make run FLAGS="-httpport 8080 -wallet.provider http://localhost:8545 -wallet.ke
 ### Configuration
 Below is a list of environment variables that can be configured.
 
-- `WEB3_PROVIDER`: RPC Endpoint to connect with the network.
+- `WEB3_PROVIDER`: RPC Endpoint to connect with the network node.
 - `PRIVATE_KEY`: Private key hex to fund user requests with.
 - `KEYSTORE`: Keystore file to fund user requests with.
 - `HCAPTCHA_SITEKEY`: hCaptcha sitekey.
 - `HCAPTCHA_SECRET`: hCaptcha secret.
-- `ERC20_TOKEN_ADDRESS`: Contract address of ERC20 token on the above mentioned network, defaults to Lisk L2 token address.
+- `ERC20_TOKEN_ADDRESS`: Contract address of the ERC20 token on the configured network, defaults to contract address for Lisk ERC20 tokens on Lisk Sepolia.
 
 You can configure the funder by setting any of the following environment variable instead of command-line flags:
 ```bash
