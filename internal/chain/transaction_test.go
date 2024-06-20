@@ -78,17 +78,18 @@ func TestTxBuilder_TransferERC20(t *testing.T) {
 	defer patches.Reset()
 
 	txBuilder := &TxBuild{
-		client:       simBackend.Client(),
-		privateKey:   privateKey,
-		signer:       types.NewEIP155Signer(big.NewInt(1337)),
-		fromAddress:  crypto.PubkeyToAddress(privateKey.PublicKey),
-		chainID:      big.NewInt(1337),
-		tokenAddress: "0xbb5801a7D398351b8bE11C439e05C5B3259aeux0",
+		client:           simBackend.Client(),
+		privateKey:       privateKey,
+		signer:           types.NewEIP155Signer(big.NewInt(1337)),
+		fromAddress:      crypto.PubkeyToAddress(privateKey.PublicKey),
+		chainID:          big.NewInt(1337),
+		tokenAddress:     "0xbb5801a7D398351b8bE11C439e05C5B3259aeux0",
+		contractInstance: nil,
 	}
 	bgCtx := context.Background()
 	toAddress := common.HexToAddress("0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B")
 	value := big.NewInt(1000)
-	txHash, err := txBuilder.TransferERC20(bgCtx, toAddress.Hex(), value)
+	txHash, err := txBuilder.TransferERC20(bgCtx, toAddress.Hex(), value, big.NewInt(30000))
 	if err != nil {
 		t.Errorf("could not add tx to pending block: %v", err)
 	}

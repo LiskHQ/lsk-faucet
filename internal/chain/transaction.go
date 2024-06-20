@@ -8,7 +8,7 @@ import (
 	"strings"
 	"sync/atomic"
 
-	"github.com/ethereum/go-ethereum"
+	"github.com/LiskHQ/lsk-faucet/internal/bindings"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -20,18 +20,20 @@ import (
 
 type TxBuilder interface {
 	Sender() common.Address
+	GetContractInstance() *bindings.Token
 	TransferETH(ctx context.Context, to string, value *big.Int) (common.Hash, error)
-	TransferERC20(ctx context.Context, to string, value *big.Int) (common.Hash, error)
+	TransferERC20(ctx context.Context, to string, value *big.Int, balance *big.Int) (common.Hash, error)
 }
 
 type TxBuild struct {
-	client       bind.ContractTransactor
-	privateKey   *ecdsa.PrivateKey
-	signer       types.Signer
-	fromAddress  common.Address
-	nonce        uint64
-	chainID      *big.Int
-	tokenAddress string
+	client           bind.ContractBackend
+	privateKey       *ecdsa.PrivateKey
+	signer           types.Signer
+	fromAddress      common.Address
+	nonce            uint64
+	chainID          *big.Int
+	tokenAddress     string
+	contractInstance *bindings.Token
 }
 
 func NewTxBuilder(provider string, privateKey *ecdsa.PrivateKey, tokenAddress string, chainID *big.Int) (TxBuilder, error) {
@@ -47,13 +49,19 @@ func NewTxBuilder(provider string, privateKey *ecdsa.PrivateKey, tokenAddress st
 		}
 	}
 
+	contractInstance, err := bindings.NewToken(common.HexToAddress(tokenAddress), client)
+	if err != nil {
+		return nil, err
+	}
+
 	txBuilder := &TxBuild{
-		client:       client,
-		privateKey:   privateKey,
-		signer:       types.NewEIP155Signer(chainID),
-		fromAddress:  crypto.PubkeyToAddress(privateKey.PublicKey),
-		chainID:      chainID,
-		tokenAddress: tokenAddress,
+		client:           client,
+		privateKey:       privateKey,
+		signer:           types.NewEIP155Signer(chainID),
+		fromAddress:      crypto.PubkeyToAddress(privateKey.PublicKey),
+		chainID:          chainID,
+		tokenAddress:     tokenAddress,
+		contractInstance: contractInstance,
 	}
 	txBuilder.refreshNonce(context.Background())
 
@@ -62,6 +70,10 @@ func NewTxBuilder(provider string, privateKey *ecdsa.PrivateKey, tokenAddress st
 
 func (b *TxBuild) Sender() common.Address {
 	return b.fromAddress
+}
+
+func (b *TxBuild) GetContractInstance() *bindings.Token {
+	return b.contractInstance
 }
 
 func (b *TxBuild) TransferETH(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
@@ -96,7 +108,7 @@ func (b *TxBuild) TransferETH(ctx context.Context, to string, value *big.Int) (c
 	return signedTx.Hash(), nil
 }
 
-func (b *TxBuild) TransferERC20(ctx context.Context, to string, value *big.Int) (common.Hash, error) {
+func (b *TxBuild) TransferERC20(ctx context.Context, to string, value *big.Int, balance *big.Int) (common.Hash, error) {
 	emptyHash := common.Hash{}
 	publicKey := b.privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
@@ -131,12 +143,11 @@ func (b *TxBuild) TransferERC20(ctx context.Context, to string, value *big.Int) 
 	data = append(data, paddedAddress...)
 	data = append(data, paddedAmount...)
 
-	gasLimit, err := b.client.EstimateGas(ctx, ethereum.CallMsg{
-		To:   &tokenAddress,
-		Data: data,
-	})
-	if err != nil {
-		return emptyHash, err
+	var gasLimit uint64
+	if balance.BitLen() == 0 {
+		gasLimit = 55000
+	} else {
+		gasLimit = 35000
 	}
 
 	tx := types.NewTransaction(nonce, tokenAddress, big.NewInt(0), gasLimit, gasPrice, data)
