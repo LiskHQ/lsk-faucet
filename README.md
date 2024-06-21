@@ -22,7 +22,7 @@ LSK faucet is a web application that can be configured and deployed to get ETH a
 
 * Go (1.22 or later)
 * Node.js
-* Solidity compiler (Solc)
+* Solidity compiler (solc)
 * Abigen
 
 ### Installation
@@ -113,25 +113,16 @@ The following are the available command-line flags(excluding above wallet flags)
 #### Build docker image
 Run the following command to build docker image:
 ```bash
-make build
+make build-image
 ```
 
 #### Run faucet
-Run the following command to start the application:
+Set the appropriate configuration in `.env` file and run the following command to start the application:
 
 ```bash
-make docker-start WEB3_PROVIDER=<rpc-endpoint> PRIVATE_KEY=<hex-private-key>
+make docker-start
 
 ```
-**NOTE**: Please replace `<rpc-endpoint>` and `<hex-private-key>` with appropriate values.
-
-or
-
-```bash
-make docker-start WEB3_PROVIDER=<rpc-endpoint> KEYSTORE=<keystore-path>
-```
-
-**NOTE**: Please replace `<rpc-endpoint>` and `<keystore-path>` with appropriate values.
 
 ## License
 

@@ -18,6 +18,11 @@ import (
 	"golang.org/x/crypto/sha3"
 )
 
+var (
+	gasLimitInitializedAccount    uint64 = 35000
+	gasLimitNonInitializedAccount uint64 = 55000
+)
+
 type TxBuilder interface {
 	Sender() common.Address
 	GetContractInstance() *bindings.Token
@@ -145,9 +150,9 @@ func (b *TxBuild) TransferERC20(ctx context.Context, to string, value *big.Int, 
 
 	var gasLimit uint64
 	if balance.BitLen() == 0 {
-		gasLimit = 55000
+		gasLimit = gasLimitNonInitializedAccount
 	} else {
-		gasLimit = 35000
+		gasLimit = gasLimitInitializedAccount
 	}
 
 	tx := types.NewTransaction(nonce, tokenAddress, big.NewInt(0), gasLimit, gasPrice, data)

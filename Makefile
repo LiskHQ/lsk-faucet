@@ -1,10 +1,17 @@
 
+include .env
+
 APP_NAME = lsk-faucet
 PKGS=$(shell go list ./... | grep -v "/vendor/")
 BLUE = \033[1;34m
 GREEN = \033[1;32m
 COLOR_END = \033[0;39m
 BINDING_OUTPUT_DIR=$(realpath ./internal/bindings)
+
+validate-env: # Validates if the necessary environment variables are set
+ifndef ERC20_CONTRACT_FILE_PATH
+	$(error `ERC20_CONTRACT_FILE_PATH` environment variable is undefined)
+endif
 
 build: build-frontend build-backend
 
@@ -21,7 +28,7 @@ build-frontend: # Builds the frontned application
 run: # Runs the application, use `make run FLAGS="--help"`
 	./bin/${APP_NAME} ${FLAGS}
 
-generate-abi:
+generate-abi: validate-env
 	@echo "$(BLUE)Generating abi file... $(COLOR_END)"
 	solc --overwrite --abi $(ERC20_CONTRACT_FILE_PATH) -o $(BINDING_OUTPUT_DIR)
 	@echo "$(GREEN)ABI file generated successfully$(COLOR_END)"
@@ -49,9 +56,9 @@ build-image: # Builds docker image
 docker-start: # Runs docker image
 	@echo "$(BLUE)Starting docker container $(APP_NAME)...$(COLOR_END)"
 ifdef PRIVATE_KEY
-	docker run --name $(APP_NAME) -p 8080:8080 -d -e WEB3_PROVIDER=$(WEB3_PROVIDER) -e PRIVATE_KEY=$(PRIVATE_KEY) $(APP_NAME)
+	docker run --name $(APP_NAME) -p 8080:8080 -d --env-file .env $(APP_NAME)
 else ifdef KEYSTORE
-	docker run --name $(APP_NAME) -p 8080:8080 -d -e WEB3_PROVIDER=$(WEB3_PROVIDER) -e KEYSTORE=$(KEYSTORE) -v $(KEYSTORE)/keystore:/app/keystore -v $(KEYSTORE)/password.txt:/app/password.txt $(APP_NAME)
+	docker run --name $(APP_NAME) -p 8080:8080 -d --env-file .env -v $(KEYSTORE)/keystore:/app/keystore -v $(KEYSTORE)/password.txt:/app/password.txt $(APP_NAME)
 endif
 
 docker-stop:

@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient/simulated"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestTxBuilder_TransferETH(t *testing.T) {
@@ -89,7 +90,9 @@ func TestTxBuilder_TransferERC20(t *testing.T) {
 	bgCtx := context.Background()
 	toAddress := common.HexToAddress("0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B")
 	value := big.NewInt(1000)
-	txHash, err := txBuilder.TransferERC20(bgCtx, toAddress.Hex(), value, big.NewInt(30000))
+
+	// Transaction when recipient is initialized
+	txHashInitAcc, err := txBuilder.TransferERC20(bgCtx, toAddress.Hex(), value, big.NewInt(30000))
 	if err != nil {
 		t.Errorf("could not add tx to pending block: %v", err)
 	}
@@ -99,9 +102,40 @@ func TestTxBuilder_TransferERC20(t *testing.T) {
 	if err != nil {
 		t.Errorf("could not get block at height 1: %v", err)
 	}
-	if txHash != block.Transactions()[0].Hash() {
-		t.Errorf("did not commit sent transaction. expected hash %v got hash %v", block.Transactions()[0].Hash(), txHash)
+	if txHashInitAcc != block.Transactions()[0].Hash() {
+		t.Errorf("did not commit sent transaction. expected hash %v got hash %v", block.Transactions()[0].Hash(), txHashInitAcc)
 	}
+
+	txInitAcc, _, err := simBackend.Client().TransactionByHash(bgCtx, txHashInitAcc)
+	if err != nil {
+		t.Errorf("could not get transaction by hash: %v", err)
+	}
+
+	gasLimit := txInitAcc.Gas()
+	assert.Equal(t, gasLimit, gasLimitInitializedAccount)
+
+	// Transaction when recipient is not initialized
+	txHashNonInitAcc, err := txBuilder.TransferERC20(bgCtx, toAddress.Hex(), value, big.NewInt(0))
+	if err != nil {
+		t.Errorf("could not add tx to pending block: %v", err)
+	}
+	simBackend.Commit()
+
+	block, err = simBackend.Client().BlockByNumber(bgCtx, big.NewInt(2))
+	if err != nil {
+		t.Errorf("could not get block at height 1: %v", err)
+	}
+	if txHashNonInitAcc != block.Transactions()[0].Hash() {
+		t.Errorf("did not commit sent transaction. expected hash %v got hash %v", block.Transactions()[0].Hash(), txHashNonInitAcc)
+	}
+
+	txNonInitAcc, _, err := simBackend.Client().TransactionByHash(bgCtx, txHashNonInitAcc)
+	if err != nil {
+		t.Errorf("could not get transaction by hash: %v", err)
+	}
+
+	gasLimit = txNonInitAcc.Gas()
+	assert.Equal(t, gasLimit, gasLimitNonInitializedAccount)
 
 	// TODO: Verify ERC20 token balance of recipient if possible in future with the simulator
 }

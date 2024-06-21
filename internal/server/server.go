@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"net/http"
 	"strconv"
 	"time"
@@ -60,7 +61,7 @@ func (s *Server) handleClaim() http.HandlerFunc {
 		currBalance, err := s.GetContractInstance().BalanceOf(&bind.CallOpts{}, common.HexToAddress(address))
 		if err != nil {
 			log.WithError(err).Error("Failed to fetch recipient balance")
-			return
+			currBalance = big.NewInt(0)
 		}
 
 		txHash, err := s.TransferERC20(ctx, address, chain.LSKToWei(int64(s.cfg.payout)), currBalance)
