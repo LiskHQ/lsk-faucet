@@ -3,10 +3,13 @@ package server
 import (
 	"context"
 	"fmt"
+	"math/big"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	"github.com/ethereum/go-ethereum/common"
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/negroni"
 
@@ -50,14 +53,20 @@ func (s *Server) handleClaim() http.HandlerFunc {
 			http.NotFound(w, r)
 			return
 		}
-
 		// The error always be nil since it has already been handled in limiter
 		address, _ := readAddress(r)
 		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
 		defer cancel()
-		txHash, err := s.TransferERC20(ctx, address, chain.LSKToWei(int64(s.cfg.payout)))
+
+		currBalance, err := s.GetContractInstance().BalanceOf(&bind.CallOpts{}, common.HexToAddress(address))
 		if err != nil {
-			log.WithError(err).Error("Failed to send transaction")
+			log.WithError(err).Error("failed to fetch recipient balance")
+			currBalance = big.NewInt(0)
+		}
+
+		txHash, err := s.TransferERC20(ctx, address, chain.LSKToWei(int64(s.cfg.payout)), currBalance)
+		if err != nil {
+			log.WithError(err).Error("failed to send transaction")
 			renderJSON(w, claimResponse{Message: err.Error()}, http.StatusInternalServerError)
 			return
 		}
