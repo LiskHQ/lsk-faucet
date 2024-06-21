@@ -60,13 +60,13 @@ func (s *Server) handleClaim() http.HandlerFunc {
 
 		currBalance, err := s.GetContractInstance().BalanceOf(&bind.CallOpts{}, common.HexToAddress(address))
 		if err != nil {
-			log.WithError(err).Error("Failed to fetch recipient balance")
+			log.WithError(err).Error("failed to fetch recipient balance")
 			currBalance = big.NewInt(0)
 		}
 
 		txHash, err := s.TransferERC20(ctx, address, chain.LSKToWei(int64(s.cfg.payout)), currBalance)
 		if err != nil {
-			log.WithError(err).Error("Failed to send transaction")
+			log.WithError(err).Error("failed to send transaction")
 			renderJSON(w, claimResponse{Message: err.Error()}, http.StatusInternalServerError)
 			return
 		}

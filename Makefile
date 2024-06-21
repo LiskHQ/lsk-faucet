@@ -1,4 +1,3 @@
-
 include .env
 
 APP_NAME = lsk-faucet

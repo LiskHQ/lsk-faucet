@@ -45,7 +45,7 @@ make build-frontend
 make generate-binding ERC20_CONTRACT_FILE_PATH=<erc20-contract-file-path>
 ```
 
-**NOTE**: Please make sure to generate Go binding before building the Go project.
+**NOTE**: Please make sure to generate the Go binding corresponding to your contract before building the project.
 
 4. Build Go project 
 ```bash
