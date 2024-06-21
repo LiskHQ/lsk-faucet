@@ -22,6 +22,8 @@ LSK faucet is a web application that can be configured and deployed to get ETH a
 
 * Go (1.22 or later)
 * Node.js
+* Solidity compiler (Solc)
+* Abigen
 
 ### Installation
 
@@ -38,8 +40,14 @@ cd lsk-faucet
 ```bash
 make build-frontend
 ```
+3. Generate Go binding for ERC20 token smart contract
+```bash
+make generate-binding ERC20_CONTRACT_FILE_PATH=<erc20-contract-file-path>
+```
 
-3. Build Go project 
+**NOTE**: Please make sure to generate Go binding before building the Go project.
+
+4. Build Go project 
 ```bash
 make build-backend
 ```
