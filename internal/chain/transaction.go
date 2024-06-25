@@ -20,7 +20,7 @@ import (
 
 var (
 	gasLimitInitializedAccount    uint64 = 35000
-	gasLimitNonInitializedAccount uint64 = 55000
+	gasLimitNonInitializedAccount uint64 = 52000
 )
 
 type TxBuilder interface {
