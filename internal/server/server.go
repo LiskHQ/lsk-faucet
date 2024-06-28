@@ -32,6 +32,7 @@ func NewServer(builder chain.TxBuilder, cfg *Config) *Server {
 func (s *Server) setupRouter() *http.ServeMux {
 	router := http.NewServeMux()
 	router.Handle("/", http.FileServer(web.Dist()))
+	router.Handle("/health", s.handleHealthCheck())
 	limiter := NewLimiter(s.cfg.proxyCount, time.Duration(s.cfg.interval)*time.Minute)
 	hcaptcha := NewCaptcha(s.cfg.hcaptchaSiteKey, s.cfg.hcaptchaSecret)
 	router.Handle("/api/claim", negroni.New(limiter, hcaptcha, negroni.Wrap(s.handleClaim())))
@@ -93,5 +94,12 @@ func (s *Server) handleInfo() http.HandlerFunc {
 			Payout:          strconv.Itoa(s.cfg.payout),
 			HcaptchaSiteKey: s.cfg.hcaptchaSiteKey,
 		}, http.StatusOK)
+	}
+}
+
+func (s *Server) handleHealthCheck() http.HandlerFunc {
+	return func(w http.ResponseWriter, _ *http.Request) {
+		//nolint:errcheck
+		w.Write([]byte("OK"))
 	}
 }
