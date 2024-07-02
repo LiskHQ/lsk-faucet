@@ -10,11 +10,14 @@
     payout: 1,
     symbol: 'ETH',
     hcaptcha_sitekey: '',
+    explorer_url: '',
+    explorer_txPath: '',
   };
 
   let mounted = false;
   let hcaptchaLoaded = false;
   let feedback = null;
+  let txURL = null;
 
   onMount(async () => {
     const res = await fetch('/api/info');
@@ -37,11 +40,12 @@
 
   async function handleRequest() {
     let address = input;
+    const errMsg = 'Please enter a valid address or ENS name';
     if (address === null) {
       feedback = {
-        message: 'Please enter a valid address or ENS name',
+        message: errMsg,
         type: 'error',
-      }
+      };
       return;
     }
 
@@ -51,16 +55,16 @@
         address = await provider.resolveName(address);
         if (!address) {
           feedback = {
-            message: 'Invalid ENS name',
+            message: errMsg,
             type: 'error',
-          }
+          };
           return;
         }
       } catch (error) {
         feedback = {
-          message: error.reason,
+          message: errMsg,
           type: 'error',
-        }
+        };
         return;
       }
     }
@@ -69,9 +73,9 @@
       address = getAddress(address);
     } catch (error) {
       feedback = {
-        message: error.reason,
+        message: errMsg,
         type: 'error',
-      }
+      };
       return;
     }
 
@@ -96,10 +100,17 @@
       });
 
       let { msg } = await res.json();
+      if (msg.includes('txhash')) {
+        const txHash = msg.split(' ')[1];
+        txURL = `${faucetInfo.explorer_url}/${faucetInfo.explorer_txPath}/${txHash}`;
+      } else {
+        txURL = null;
+      }
+
       feedback = {
         message: msg,
         type: msg.includes('exceeded') ? 'warning' : 'success',
-      }
+      };
     } catch (err) {
       console.error(err);
     }
@@ -184,8 +195,15 @@
               </p>
             </div>
             {#if feedback}
-              <div class="feedback"><span class={feedback.type}>
-                <img src={`../${feedback.type}-icon.svg`} alt="info" />{feedback.message}</span>
+              <div class="feedback">
+                <span class={feedback.type}>
+                  <img src={`../${feedback.type}-icon.svg`} alt="info" />
+                  {#if txURL != null}
+                    <a href={txURL} target="_blank">{feedback.message}</a>
+                  {:else}
+                    {feedback.message}
+                  {/if}
+                </span>
               </div>
             {/if}
           </div>
@@ -233,7 +251,7 @@
     border-radius: 8px 0px 0px 8px;
     background: #121a33;
     color: #f9fafb;
-    border-color : transparent;
+    border-color: transparent;
   }
   .address-search::placeholder {
     color: #f9fafb;
@@ -267,12 +285,13 @@
     vertical-align: bottom;
   }
   .feedback .success {
-    color: #2BD67B;
+    color: #2bd67b;
+    text-decoration: underline;
   }
   .feedback .warning {
-    color: #FEC84B;
+    color: #fec84b;
   }
   .feedback .error {
-    color: #F04437;
+    color: #f04437;
   }
 </style>
