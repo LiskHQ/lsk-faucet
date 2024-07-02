@@ -118,33 +118,33 @@
 <main>
   <section class="hero is-info is-fullheight">
     <div class="hero-head">
-        <nav class="navbar">
-          <div class="container wrapper">
-            <div class="navbar-brand">
-              <a class="navbar-item" href="../..">
-                <span class="icon">
-                  <img src="../faucet-logo.svg" />
-                </span>
-                <span><b>{faucetInfo.symbol} Faucet</b></span>
-              </a>
-            </div>
-            <div id="navbarMenu" class="navbar-menu">
-              <div class="navbar-end">
-                <span class="navbar-item">
-                  <a
-                    class="button is-white is-outlined"
-                    href="https://github.com/liskhq/lsk-faucet"
-                  >
-                    <span class="icon">
-                      <i class="fa fa-github" />
-                    </span>
-                    <span>View Source</span>
-                  </a>
-                </span>
-              </div>
+      <nav class="navbar">
+        <div class="container wrapper">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="../..">
+              <span class="icon">
+                <img src="../faucet-logo.svg" />
+              </span>
+              <span><b>{faucetInfo.symbol} Faucet</b></span>
+            </a>
+          </div>
+          <div id="navbarMenu" class="navbar-menu">
+            <div class="navbar-end">
+              <span class="navbar-item">
+                <a
+                  class="button is-white is-outlined"
+                  href="https://github.com/liskhq/lsk-faucet"
+                >
+                  <span class="icon">
+                    <i class="fa fa-github" />
+                  </span>
+                  <span>View Source</span>
+                </a>
+              </span>
             </div>
           </div>
-        </nav>
+        </div>
+      </nav>
     </div>
 
     <div class="hero-body">
@@ -187,7 +187,12 @@
 <style>
   .hero.is-info {
     background:
-      linear-gradient(180deg, rgba(14, 14, 40, 0.00) 0%, rgba(12, 21, 46, 0.25) 0%, rgba(35, 61, 135, 0.00) 49%, rgba(18, 27, 52, 0.40) 70.71%, rgba(16, 23, 43, 0.55) 79.18%, rgba(13, 22, 47, 0.70) 87.02%, #0C152E 93.58%, #0C152E 100%);
+      linear-gradient(180deg, rgba(14, 14, 40, 0.00) 0%, rgba(12, 21, 46, 0.25) 0%, rgba(35, 61, 135, 0.00) 49%, rgba(18, 27, 52, 0.40) 70.71%, rgba(16, 23, 43, 0.55) 79.18%, rgba(13, 22, 47, 0.70) 87.02%, #0C152E 93.58%, #0C152E 100%),
+      url('/background.png') no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
   }
   .hero-container {
     background: url('/faucet-bg.png');
