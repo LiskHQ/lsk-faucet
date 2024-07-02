@@ -102,7 +102,7 @@ The following are the available command-line flags(excluding above wallet flags)
 | -httpport         | Listener port to serve HTTP connection              | 8080                                       |
 | -proxycount       | Count of reverse proxies in front of the server     | 0                                          |
 | -token-address    | Token contract address                              | 0x8a21CF9Ba08Ae709D64Cb25AfAA951183EC9FF6D |
-| -faucet.amount    | Number of ERC20 tokens to transfer per user request | 10                                         |
+| -faucet.amount    | Number of ERC20 tokens to transfer per user request | 1                                          |
 | -faucet.minutes   | Number of minutes to wait between funding rounds    | 10080 (1 week)                             |
 | -faucet.name      | Network name to display on the frontend             | sepolia                                    |
 | -faucet.symbol    | Token symbol to display on the frontend             | LSK                                        |

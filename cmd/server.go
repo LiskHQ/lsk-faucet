@@ -26,7 +26,7 @@ var (
 	proxyCntFlag = flag.Int("proxycount", 0, "Count of reverse proxies in front of the server")
 	versionFlag  = flag.Bool("version", false, "Print version number")
 
-	payoutFlag   = flag.Int("faucet.amount", 10, "Number of ERC20 tokens to transfer per user request")
+	payoutFlag   = flag.Int("faucet.amount", 1, "Number of ERC20 tokens to transfer per user request")
 	intervalFlag = flag.Int("faucet.minutes", 10080, "Number of minutes to wait between funding rounds")
 	netnameFlag  = flag.String("faucet.name", "lisk_sepolia", "Network name to display on the frontend")
 	symbolFlag   = flag.String("faucet.symbol", "LSK", "Token symbol to display on the frontend")
