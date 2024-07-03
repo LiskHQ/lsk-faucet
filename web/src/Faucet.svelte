@@ -187,16 +187,8 @@
 
 <style>
   .hero.is-info {
-    background:
-      linear-gradient(180deg, rgba(14, 14, 40, 0.00) 0%, rgba(12, 21, 46, 0.25) 0%, rgba(35, 61, 135, 0.00) 49%, rgba(18, 27, 52, 0.40) 70.71%, rgba(16, 23, 43, 0.55) 79.18%, rgba(13, 22, 47, 0.70) 87.02%, #0C152E 93.58%, #0C152E 100%),
-      url('/background.png') no-repeat center center fixed;
-    -webkit-background-size: cover;
-    -moz-background-size: cover;
-    -o-background-size: cover;
-    background-size: cover;
-  }
-  .hero-container {
-    background: url('/faucet-bg.png');
+    background: url('/faucet-bg.png') no-repeat center center fixed;
+    background-color: #0c152e;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -226,6 +218,7 @@
   .address-box {
     background-color: transparent;
     padding: 0;
+    outline:none
   }
   .address-search {
     border-radius: 8px 0px 0px 8px;
