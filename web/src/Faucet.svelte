@@ -246,7 +246,6 @@
   .address-box {
     background-color: transparent;
     padding: 0;
-    outline:none
   }
   .address-search {
     border-radius: 8px 0px 0px 8px;
