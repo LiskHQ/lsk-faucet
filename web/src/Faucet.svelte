@@ -137,7 +137,8 @@
                   href="https://github.com/liskhq/lsk-faucet"
                 >
                   <span class="icon">
-                    <i class="fa fa-github" />
+                    <!-- svelte-ignore a11y-missing-attribute -->
+                    <img src="../github-logo.svg"/>
                   </span>
                   <span>View Source</span>
                 </a>
@@ -218,7 +219,6 @@
   .address-box {
     background-color: transparent;
     padding: 0;
-    outline:none
   }
   .address-search {
     border-radius: 8px 0px 0px 8px;
