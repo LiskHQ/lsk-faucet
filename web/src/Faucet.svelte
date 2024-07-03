@@ -123,7 +123,8 @@
           <div class="navbar-brand">
             <a class="navbar-item" href="../..">
               <span class="icon">
-                <img src="../faucet-logo.svg" />
+                <!-- svelte-ignore a11y-missing-attribute -->
+                <img src="../faucet-logo.svg"/>
               </span>
               <span><b>{faucetInfo.symbol} Faucet</b></span>
             </a>
