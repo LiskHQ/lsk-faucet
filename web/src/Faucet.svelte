@@ -150,7 +150,7 @@
     </div>
 
     <div class="hero-body">
-      <div class="container has-text-centered">
+      <div class="container has-text-centered container-postion">
         <div class="column is-8 is-offset-2">
           <h1 class="title">
             Receive {faucetInfo.payout}
@@ -222,11 +222,12 @@
   }
   .address-search {
     border-radius: 8px 0px 0px 8px;
-    background: #121A33;
-    color: #F9FAFB;
+    background: #121a33;
+    color: #f9fafb;
+    border-color : transparent;
   }
   .address-search::placeholder {
-    color: #F9FAFB;
+    color: #f9fafb;
   }
   .m-0 {
     margin: 0;
@@ -235,12 +236,16 @@
     padding: 12px;
   }
   .is-secondary {
-    background-color: #2BD67B;
+    background-color: #2bd67b;
   }
   .text-black {
-    color: #110B31;
+    color: #110b31;
   }
   .request-btn {
     border-radius: 0px 8px 8px 0px;
+  }
+  .container-postion {
+    max-width: 65%;
+    bottom: 80px;
   }
 </style>
