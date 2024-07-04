@@ -267,7 +267,7 @@
     vertical-align: bottom;
   }
   .feedback .success {
-    color: #F2F4F7;
+    color: #2BD67B;
   }
   .feedback .warning {
     color: #FEC84B;
