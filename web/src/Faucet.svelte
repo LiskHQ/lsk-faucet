@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { getAddress } from '@ethersproject/address';
   import { CloudflareProvider } from '@ethersproject/providers';
-  import { setDefaults as setToast, toast } from 'bulma-toast';
 
   let input = null;
   let faucetInfo = {
@@ -15,6 +14,7 @@
 
   let mounted = false;
   let hcaptchaLoaded = false;
+  let feedback = null;
 
   onMount(async () => {
     const res = await fetch('/api/info');
@@ -35,18 +35,13 @@
     });
   }
 
-  setToast({
-    position: 'bottom-center',
-    dismissible: true,
-    pauseOnHover: true,
-    closeOnClick: false,
-    animate: { in: 'fadeIn', out: 'fadeOut' },
-  });
-
   async function handleRequest() {
     let address = input;
     if (address === null) {
-      toast({ message: 'input required', type: 'is-warning' });
+      feedback = {
+        message: 'Please enter a valid address or ENS name',
+        type: 'error',
+      }
       return;
     }
 
@@ -55,11 +50,17 @@
         const provider = new CloudflareProvider();
         address = await provider.resolveName(address);
         if (!address) {
-          toast({ message: 'invalid ENS name', type: 'is-warning' });
+          feedback = {
+            message: 'Invalid ENS name',
+            type: 'error',
+          }
           return;
         }
       } catch (error) {
-        toast({ message: error.reason, type: 'is-warning' });
+        feedback = {
+          message: error.reason,
+          type: 'error',
+        }
         return;
       }
     }
@@ -67,7 +68,10 @@
     try {
       address = getAddress(address);
     } catch (error) {
-      toast({ message: error.reason, type: 'is-warning' });
+      feedback = {
+        message: error.reason,
+        type: 'error',
+      }
       return;
     }
 
@@ -92,8 +96,10 @@
       });
 
       let { msg } = await res.json();
-      let type = res.ok ? 'is-success' : 'is-warning';
-      toast({ message: msg, type });
+      feedback = {
+        message: msg,
+        type: msg.includes('exceeded') ? 'warning' : 'success',
+      }
     } catch (err) {
       console.error(err);
     }
@@ -123,8 +129,7 @@
           <div class="navbar-brand">
             <a class="navbar-item" href="../..">
               <span class="icon">
-                <!-- svelte-ignore a11y-missing-attribute -->
-                <img src="../faucet-logo.svg"/>
+                <img src="../faucet-logo.svg" alt="logo" />
               </span>
               <span><b>{faucetInfo.symbol} Faucet</b></span>
             </a>
@@ -137,8 +142,7 @@
                   href="https://github.com/liskhq/lsk-faucet"
                 >
                   <span class="icon">
-                    <!-- svelte-ignore a11y-missing-attribute -->
-                    <img src="../github-logo.svg"/>
+                    <img src="../github-logo.svg" alt="github-logo" />
                   </span>
                   <span>View Source</span>
                 </a>
@@ -150,7 +154,7 @@
     </div>
 
     <div class="hero-body">
-      <div class="container has-text-centered container-postion">
+      <div class="container has-text-centered container-position">
         <div class="column is-8 is-offset-2">
           <h1 class="title">
             Receive {faucetInfo.payout}
@@ -179,6 +183,11 @@
                 </button>
               </p>
             </div>
+            {#if feedback}
+              <div class="feedback"><span class={feedback.type}>
+                <img src={`../${feedback.type}-icon.svg`} alt="info" />{feedback.message}</span>
+              </div>
+            {/if}
           </div>
         </div>
       </div>
@@ -244,8 +253,26 @@
   .request-btn {
     border-radius: 0px 8px 8px 0px;
   }
-  .container-postion {
+  .container-position {
     max-width: 65%;
     bottom: 80px;
+  }
+  .feedback {
+    font-size: 16px;
+    line-height: 22px;
+    margin-top: 4px;
+  }
+  .feedback img {
+    margin-right: 8px;
+    vertical-align: bottom;
+  }
+  .feedback .success {
+    color: #F2F4F7;
+  }
+  .feedback .warning {
+    color: #FEC84B;
+  }
+  .feedback .error {
+    color: #F04437;
   }
 </style>
