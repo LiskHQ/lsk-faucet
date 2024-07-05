@@ -2,7 +2,6 @@
   import { onMount } from 'svelte';
   import { getAddress } from '@ethersproject/address';
   import { CloudflareProvider } from '@ethersproject/providers';
-  import { setDefaults as setToast, toast } from 'bulma-toast';
 
   let input = null;
   let faucetInfo = {
@@ -11,10 +10,14 @@
     payout: 1,
     symbol: 'ETH',
     hcaptcha_sitekey: '',
+    explorer_url: '',
+    explorer_txPath: '',
   };
 
   let mounted = false;
   let hcaptchaLoaded = false;
+  let feedback = null;
+  let txURL = null;
 
   onMount(async () => {
     const res = await fetch('/api/info');
@@ -35,18 +38,14 @@
     });
   }
 
-  setToast({
-    position: 'bottom-center',
-    dismissible: true,
-    pauseOnHover: true,
-    closeOnClick: false,
-    animate: { in: 'fadeIn', out: 'fadeOut' },
-  });
-
   async function handleRequest() {
     let address = input;
+    const errMsg = 'Please enter a valid address or ENS name';
     if (address === null) {
-      toast({ message: 'input required', type: 'is-warning' });
+      feedback = {
+        message: errMsg,
+        type: 'error',
+      };
       return;
     }
 
@@ -55,11 +54,17 @@
         const provider = new CloudflareProvider();
         address = await provider.resolveName(address);
         if (!address) {
-          toast({ message: 'invalid ENS name', type: 'is-warning' });
+          feedback = {
+            message: errMsg,
+            type: 'error',
+          };
           return;
         }
       } catch (error) {
-        toast({ message: error.reason, type: 'is-warning' });
+        feedback = {
+          message: errMsg,
+          type: 'error',
+        };
         return;
       }
     }
@@ -67,7 +72,10 @@
     try {
       address = getAddress(address);
     } catch (error) {
-      toast({ message: error.reason, type: 'is-warning' });
+      feedback = {
+        message: errMsg,
+        type: 'error',
+      };
       return;
     }
 
@@ -92,8 +100,17 @@
       });
 
       let { msg } = await res.json();
-      let type = res.ok ? 'is-success' : 'is-warning';
-      toast({ message: msg, type });
+      if (msg.includes('txhash')) {
+        const txHash = msg.split(' ')[1];
+        txURL = `${faucetInfo.explorer_url}/${faucetInfo.explorer_txPath}/${txHash}`;
+      } else {
+        txURL = null;
+      }
+
+      feedback = {
+        message: msg,
+        type: msg.includes('exceeded') ? 'warning' : 'success',
+      };
     } catch (err) {
       console.error(err);
     }
@@ -119,11 +136,11 @@
   <section class="hero is-info is-fullheight">
     <div class="hero-head">
       <nav class="navbar">
-        <div class="container">
+        <div class="container wrapper">
           <div class="navbar-brand">
             <a class="navbar-item" href="../..">
               <span class="icon">
-                <i class="fa fa-bath" />
+                <img src="../faucet-logo.svg" alt="logo" />
               </span>
               <span><b>{faucetInfo.symbol} Faucet</b></span>
             </a>
@@ -136,7 +153,7 @@
                   href="https://github.com/liskhq/lsk-faucet"
                 >
                   <span class="icon">
-                    <i class="fa fa-github" />
+                    <img src="../github-logo.svg" alt="github-logo" />
                   </span>
                   <span>View Source</span>
                 </a>
@@ -148,8 +165,8 @@
     </div>
 
     <div class="hero-body">
-      <div class="container has-text-centered">
-        <div class="column is-6 is-offset-3">
+      <div class="container has-text-centered container-position">
+        <div class="column is-8 is-offset-2">
           <h1 class="title">
             Receive {faucetInfo.payout}
             {faucetInfo.symbol} per request
@@ -158,12 +175,12 @@
             Serving from {faucetInfo.account}
           </h2>
           <div id="hcaptcha" data-size="invisible"></div>
-          <div class="box">
+          <div class="box address-box">
             <div class="field is-grouped">
-              <p class="control is-expanded">
+              <p class="control is-expanded m-0">
                 <input
                   bind:value={input}
-                  class="input is-rounded"
+                  class="input address-search p-12"
                   type="text"
                   placeholder="Enter your address or ENS name"
                 />
@@ -171,12 +188,24 @@
               <p class="control">
                 <button
                   on:click={handleRequest}
-                  class="button is-primary is-rounded"
+                  class="button is-secondary is-rounded text-black request-btn"
                 >
                   Request
                 </button>
               </p>
             </div>
+            {#if feedback}
+              <div class="feedback">
+                <span class={feedback.type}>
+                  <img src={`../${feedback.type}-icon.svg`} alt="info" />
+                  {#if txURL != null}
+                    <a href={txURL} target="_blank">{feedback.message}</a>
+                  {:else}
+                    {feedback.message}
+                  {/if}
+                </span>
+              </div>
+            {/if}
           </div>
         </div>
       </div>
@@ -186,19 +215,83 @@
 
 <style>
   .hero.is-info {
-    background:
-      linear-gradient(180deg, rgba(14, 14, 40, 0.00) 0%, rgba(12, 21, 46, 0.25) 0%, rgba(35, 61, 135, 0.00) 49%, rgba(18, 27, 52, 0.40) 70.71%, rgba(16, 23, 43, 0.55) 79.18%, rgba(13, 22, 47, 0.70) 87.02%, #0C152E 93.58%, #0C152E 100%),
-      url('/background.png') no-repeat center center fixed;
+    background: url('/faucet-bg.png') no-repeat center center fixed;
+    background-color: #0c152e;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
   .hero .subtitle {
-    padding: 3rem 0;
+    margin: 0;
+    padding: 24px 0 32px 0;
     line-height: 1.5;
   }
   .box {
     border-radius: 19px;
+  }
+  .wrapper {
+    justify-content: space-between;
+    max-width: none;
+    padding: 24px 48px;
+  }
+  .navbar-item > .icon {
+    margin-right: 8px;
+  }
+  .hero-body .title {
+    margin: 0;
+  }
+  .address-box {
+    background-color: transparent;
+    padding: 0;
+  }
+  .address-search {
+    border-radius: 8px 0px 0px 8px;
+    background: #121a33;
+    color: #f9fafb;
+    border-color: transparent;
+  }
+  .address-search::placeholder {
+    color: #f9fafb;
+  }
+  .m-0 {
+    margin: 0;
+  }
+  .p-12 {
+    padding: 12px;
+  }
+  .is-secondary {
+    background-color: #2bd67b;
+  }
+  .text-black {
+    color: #110b31;
+  }
+  .request-btn {
+    border-radius: 0px 8px 8px 0px;
+  }
+  .container-position {
+    max-width: 65%;
+    bottom: 80px;
+  }
+  .feedback {
+    font-size: 16px;
+    line-height: 22px;
+    margin-top: 4px;
+  }
+  .feedback img {
+    margin-right: 8px;
+    vertical-align: bottom;
+  }
+  .feedback .success {
+    color: #2bd67b;
+    text-decoration: underline;
+  }
+  .feedback .warning {
+    color: #fec84b;
+  }
+  .feedback .error {
+    color: #f04437;
   }
 </style>

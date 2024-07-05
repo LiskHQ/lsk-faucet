@@ -26,6 +26,8 @@ type infoResponse struct {
 	Payout          string `json:"payout"`
 	Symbol          string `json:"symbol"`
 	HcaptchaSiteKey string `json:"hcaptcha_sitekey,omitempty"`
+	ExplorerURL     string `json:"explorer_url"`
+	ExplorerTxPath  string `json:"explorer_txPath"`
 }
 
 type malformedRequest struct {

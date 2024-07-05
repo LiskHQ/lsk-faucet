@@ -76,7 +76,7 @@ func (s *Server) handleClaim() http.HandlerFunc {
 			"txHash":  txHash,
 			"address": address,
 		}).Info("Transaction sent successfully")
-		resp := claimResponse{Message: fmt.Sprintf("Txhash: %s", txHash)}
+		resp := claimResponse{Message: fmt.Sprintf("txhash: %s", txHash)}
 		renderJSON(w, resp, http.StatusOK)
 	}
 }
@@ -93,6 +93,8 @@ func (s *Server) handleInfo() http.HandlerFunc {
 			Symbol:          s.cfg.symbol,
 			Payout:          strconv.Itoa(s.cfg.payout),
 			HcaptchaSiteKey: s.cfg.hcaptchaSiteKey,
+			ExplorerURL:     s.cfg.explorerURL,
+			ExplorerTxPath:  s.cfg.explorerTxPath,
 		}, http.StatusOK)
 	}
 }
