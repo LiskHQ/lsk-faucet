@@ -93,6 +93,8 @@ func (s *Server) handleInfo() http.HandlerFunc {
 			Symbol:          s.cfg.symbol,
 			Payout:          strconv.Itoa(s.cfg.payout),
 			HcaptchaSiteKey: s.cfg.hcaptchaSiteKey,
+			ExplorerURL:     s.cfg.explorerURL,
+			ExplorerTxPath:  s.cfg.explorerTxPath,
 		}, http.StatusOK)
 	}
 }
