@@ -32,7 +32,7 @@ var (
 	symbolFlag   = flag.String("faucet.symbol", "LSK", "Token symbol to display on the frontend")
 
 	explorerURL    = flag.String("explorer.url", "https://sepolia-blockscout.lisk.com", "Block explorer URL")
-	explorerTxPath = flag.String("explorer.tx.path", "tx", "Block explorer transaction path")
+	explorerTxPath = flag.String("explorer.tx.path", "tx", "Block explorer transaction path fragment")
 
 	keyJSONFlag  = flag.String("wallet.keyjson", os.Getenv("KEYSTORE"), "Keystore file to fund user requests with")
 	keyPassFlag  = flag.String("wallet.keypass", "password.txt", "Passphrase text file to decrypt keystore")

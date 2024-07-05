@@ -106,8 +106,8 @@ The following are the available command-line flags(excluding above wallet flags)
 | -faucet.minutes   | Number of minutes to wait between funding rounds    | 10080 (1 week)                             |
 | -faucet.name      | Network name to display on the frontend             | sepolia                                    |
 | -faucet.symbol    | Token symbol to display on the frontend             | LSK                                        |
-| -explorer.url     | Block Explorer URL                                  | https://sepolia-blockscout.lisk.com        |
-| -explorer.tx.path | Block explorer transaction path                     | tx                                         |
+| -explorer.url     | Block explorer URL                                  | https://sepolia-blockscout.lisk.com        |
+| -explorer.tx.path | Block explorer transaction path fragment            | tx                                         |
 | -hcaptcha.sitekey | hCaptcha sitekey                                    |                                            |
 | -hcaptcha.secret  | hCaptcha secret                                     |                                            |
 
