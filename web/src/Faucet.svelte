@@ -270,6 +270,7 @@
   }
   .request-btn {
     border-radius: 0px 8px 8px 0px;
+    border: none;
   }
   .container-position {
     max-width: 65%;
