@@ -1,0 +1,20 @@
+name: Sync Fork
+
+on:
+  schedule:
+    - cron: "0 0 * * 1" # once a week on Monday
+  workflow_dispatch: # on button click
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: tgymnich/fork-sync@v2.0.10
+        with:
+          owner: chainflag
+          repo: eth-faucet
+          head: main
+          base: main
+          pr_title: Sync forked repo
+          pr_message: Merge latest changes from upstream repo
