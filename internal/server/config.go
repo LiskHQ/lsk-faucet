@@ -3,9 +3,10 @@ package server
 type Config struct {
 	network         string
 	symbol          string
+	payout          float64
+	tokenDecimals   int
 	httpPort        int
 	interval        int
-	payout          int
 	proxyCount      int
 	hcaptchaSiteKey string
 	hcaptchaSecret  string
@@ -13,13 +14,14 @@ type Config struct {
 	explorerTxPath  string
 }
 
-func NewConfig(network, symbol string, httpPort, interval, payout, proxyCount int, hcaptchaSiteKey, hcaptchaSecret, explorerURL, explorerTxPath string) *Config {
+func NewConfig(network, symbol string, payout float64, tokenDecimals, httpPort, interval, proxyCount int, hcaptchaSiteKey, hcaptchaSecret, explorerURL, explorerTxPath string) *Config {
 	return &Config{
 		network:         network,
 		symbol:          symbol,
 		httpPort:        httpPort,
 		interval:        interval,
 		payout:          payout,
+		tokenDecimals:   tokenDecimals,
 		proxyCount:      proxyCount,
 		hcaptchaSiteKey: hcaptchaSiteKey,
 		hcaptchaSecret:  hcaptchaSecret,

@@ -20,13 +20,14 @@ var (
 	appVersion = "v1.1.0"
 	chainIDMap = map[string]int{"lisk_sepolia": 4202}
 
-	tokenAddress = flag.String("token.address", os.Getenv("ERC20_TOKEN_ADDRESS"), "Contract address of ERC20 token")
+	tokenAddress      = flag.String("token.address", os.Getenv("ERC20_TOKEN_ADDRESS"), "Contract address of ERC20 token")
+	tokenDecimalsFlag = flag.Int("token.decimals", 18, "Token decimals")
 
 	httpPortFlag = flag.Int("httpport", 8080, "Listener port to serve HTTP connection")
 	proxyCntFlag = flag.Int("proxycount", 0, "Count of reverse proxies in front of the server")
 	versionFlag  = flag.Bool("version", false, "Print version number")
 
-	payoutFlag   = flag.Int("faucet.amount", 1, "Number of ERC20 tokens to transfer per user request")
+	payoutFlag   = flag.Float64("faucet.amount", 0.1, "Number of ERC20 tokens to transfer per user request")
 	intervalFlag = flag.Int("faucet.minutes", 10080, "Number of minutes to wait between funding rounds")
 	netnameFlag  = flag.String("faucet.name", "lisk_sepolia", "Network name to display on the frontend")
 	symbolFlag   = flag.String("faucet.symbol", "LSK", "Token symbol to display on the frontend")
@@ -65,7 +66,7 @@ func Execute() {
 	if err != nil {
 		panic(fmt.Errorf("cannot connect to web3 provider: %w", err))
 	}
-	config := server.NewConfig(*netnameFlag, *symbolFlag, *httpPortFlag, *intervalFlag, *payoutFlag, *proxyCntFlag, *hcaptchaSiteKeyFlag, *hcaptchaSecretFlag, *explorerURL, *explorerTxPath)
+	config := server.NewConfig(*netnameFlag, *symbolFlag, *payoutFlag, *tokenDecimalsFlag, *httpPortFlag, *intervalFlag, *proxyCntFlag, *hcaptchaSiteKeyFlag, *hcaptchaSecretFlag, *explorerURL, *explorerTxPath)
 	go server.NewServer(txBuilder, config).Run()
 
 	c := make(chan os.Signal, 1)

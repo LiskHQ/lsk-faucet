@@ -1,15 +1,11 @@
 package chain
 
 import (
+	"math"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 )
-
-func EtherToWei(amount int64) *big.Int {
-	ether := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
-	return new(big.Int).Mul(big.NewInt(amount), ether)
-}
 
 func Has0xPrefix(str string) bool {
 	return len(str) >= 2 && str[0] == '0' && (str[1] == 'x' || str[1] == 'X')
@@ -22,11 +18,16 @@ func IsValidAddress(address string, checksummed bool) bool {
 	return !checksummed || common.HexToAddress(address).Hex() == address
 }
 
-func LSKToWei(amount int64) *big.Int {
-	oneLskInWei := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
-	return new(big.Int).Mul(big.NewInt(amount), oneLskInWei)
-}
-
 func addLeftPadding(input []byte) []byte {
 	return common.LeftPadBytes(input, 32)
+}
+
+func TokenToWei(amount float64, decimals int) *big.Int {
+	ethDecimals := 18
+	oneEthToWei := math.Pow10(ethDecimals)
+
+	amountInt := int64(amount * oneEthToWei)
+
+	oneTokenInWei := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(decimals)), nil)
+	return new(big.Int).Div(new(big.Int).Mul(big.NewInt(amountInt), oneTokenInWei), big.NewInt(int64(oneEthToWei)))
 }

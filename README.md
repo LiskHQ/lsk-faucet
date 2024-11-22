@@ -47,7 +47,7 @@ make generate-binding ERC20_CONTRACT_FILE_PATH=<erc20-contract-file-path>
 
 **NOTE**: Please make sure to generate the Go binding corresponding to your contract before building the project.
 
-4. Build Go project 
+4. Build Go project
 ```bash
 make build-backend
 ```
@@ -102,6 +102,7 @@ The following are the available command-line flags(excluding above wallet flags)
 | -httpport         | Listener port to serve HTTP connection              | 8080                                       |
 | -proxycount       | Count of reverse proxies in front of the server     | 0                                          |
 | -token.address    | Token contract address                              | 0x8a21CF9Ba08Ae709D64Cb25AfAA951183EC9FF6D |
+| -token.decimals   | Token decimals                                      | 18                                         |
 | -faucet.amount    | Number of ERC20 tokens to transfer per user request | 1                                          |
 | -faucet.minutes   | Number of minutes to wait between funding rounds    | 10080 (1 week)                             |
 | -faucet.name      | Network name to display on the frontend             | sepolia                                    |

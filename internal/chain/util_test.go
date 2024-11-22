@@ -34,35 +34,19 @@ func TestIsValidAddress(t *testing.T) {
 	}
 }
 
-func TestEtherToWei(t *testing.T) {
+func TestTokenToWei(t *testing.T) {
 	tests := []struct {
-		name   string
-		amount int64
-		want   *big.Int
+		name          string
+		amount        float64
+		tokenDecimals int
+		want          *big.Int
 	}{
-		{name: "1ether", amount: 1, want: new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)},
+		{name: "1ether", amount: 1, tokenDecimals: 18, want: new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := EtherToWei(tt.amount); !reflect.DeepEqual(got, tt.want) {
+			if got := TokenToWei(tt.amount, tt.tokenDecimals); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("EtherToWei() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_LSKToWei(t *testing.T) {
-	tests := []struct {
-		name   string
-		amount int64
-		want   *big.Int
-	}{
-		{name: "should convert 1 LSK to 10^18 Wei", amount: 1, want: big.NewInt(1000000000000000000)},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := LSKToWei(tt.amount); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("LSKToWei() = %v, want %v", got, tt.want)
 			}
 		})
 	}
