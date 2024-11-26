@@ -40,7 +40,7 @@ generate-binding: generate-abi
 test: # Runs tests
 	@echo "Test packages"
 	go test -race -shuffle=on -coverprofile=coverage.out -cover $(PKGS)
-	
+
 lint: # Runs golangci-lint on the repo
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 	golangci-lint run

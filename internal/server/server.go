@@ -65,7 +65,7 @@ func (s *Server) handleClaim() http.HandlerFunc {
 			currBalance = big.NewInt(0)
 		}
 
-		txHash, err := s.TransferERC20(ctx, address, chain.LSKToWei(int64(s.cfg.payout)), currBalance)
+		txHash, err := s.TransferERC20(ctx, address, chain.TokenToWei(s.cfg.payout, s.cfg.tokenDecimals), currBalance)
 		if err != nil {
 			log.WithError(err).Error("failed to send transaction")
 			renderJSON(w, claimResponse{Message: err.Error()}, http.StatusInternalServerError)
@@ -91,7 +91,7 @@ func (s *Server) handleInfo() http.HandlerFunc {
 			Account:         s.Sender().String(),
 			Network:         s.cfg.network,
 			Symbol:          s.cfg.symbol,
-			Payout:          strconv.Itoa(s.cfg.payout),
+			Payout:          strconv.FormatFloat(s.cfg.payout, 'f', -1, 64),
 			HcaptchaSiteKey: s.cfg.hcaptchaSiteKey,
 			ExplorerURL:     s.cfg.explorerURL,
 			ExplorerTxPath:  s.cfg.explorerTxPath,
