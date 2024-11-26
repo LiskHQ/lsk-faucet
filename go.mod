@@ -5,13 +5,13 @@ go 1.22
 toolchain go1.22.3
 
 require (
-	github.com/agiledragon/gomonkey/v2 v2.11.0
+	github.com/agiledragon/gomonkey/v2 v2.12.0
 	github.com/ethereum/go-ethereum v1.14.5
 	github.com/jellydator/ttlcache/v2 v2.11.1
 	github.com/kataras/hcaptcha v0.0.2
 	github.com/sirupsen/logrus v1.9.3
-	github.com/stretchr/testify v1.8.4
-	github.com/urfave/negroni v1.0.0
+	github.com/stretchr/testify v1.9.0
+	github.com/urfave/negroni/v3 v3.1.1
 	golang.org/x/crypto v0.22.0
 )
 
@@ -80,6 +80,7 @@ require (
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/shirou/gopsutil v3.21.4-0.20210419000835-c7a38de76ee5+incompatible // indirect
 	github.com/status-im/keycard-go v0.2.0 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/supranational/blst v0.3.11 // indirect
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect

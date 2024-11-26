@@ -17,8 +17,8 @@ import (
 )
 
 var (
-	appVersion = "v1.1.0"
-	chainIDMap = map[string]int{"lisk_sepolia": 4202}
+	appVersion = "v1.2.0"
+	chainIDMap = map[string]int{"sepolia": 11155111, "holesky": 17000, "lisk_sepolia": 4202}
 
 	tokenAddress      = flag.String("token.address", os.Getenv("ERC20_TOKEN_ADDRESS"), "Contract address of ERC20 token")
 	tokenDecimalsFlag = flag.Int("token.decimals", 18, "Token decimals")

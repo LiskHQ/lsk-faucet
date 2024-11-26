@@ -11,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	log "github.com/sirupsen/logrus"
-	"github.com/urfave/negroni"
+	"github.com/urfave/negroni/v3"
 
 	"github.com/LiskHQ/lsk-faucet/internal/chain"
 	"github.com/LiskHQ/lsk-faucet/web"

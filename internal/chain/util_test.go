@@ -41,6 +41,8 @@ func TestTokenToWei(t *testing.T) {
 		tokenDecimals int
 		want          *big.Int
 	}{
+		{name: "0.01ether", amount: 0.01, tokenDecimals: 18, want: new(big.Int).Exp(big.NewInt(10), big.NewInt(16), nil)},
+		{name: "0.1ether", amount: 0.1, tokenDecimals: 18, want: new(big.Int).Exp(big.NewInt(10), big.NewInt(17), nil)},
 		{name: "1ether", amount: 1, tokenDecimals: 18, want: new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)},
 	}
 	for _, tt := range tests {

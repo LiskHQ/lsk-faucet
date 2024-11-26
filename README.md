@@ -11,10 +11,10 @@ LSK faucet is a web application that can be configured and deployed to get ETH a
 
 ## Features
 
-* Allow to configure the funding account via private key or keystore
-* Asynchronous processing Txs to achieve parallel execution of user requests
-* Rate limiting by ETH address and IP address as a precaution against spam
-* Prevent X-Forwarded-For spoofing by specifying the count of reverse proxies
+* Configure the funding account using a private key or keystore
+* Implement CAPTCHA verification to prevent abuse
+* Rate-limit requests by ETH address and IP address to prevent spam
+* Prevent X-Forwarded-For spoofing by specifying the number of reverse proxies
 
 ## Get started
 
@@ -33,7 +33,7 @@ git clone https://github.com/LiskHQ/lsk-faucet.git
 cd lsk-faucet
 ```
 
-2. Bundle Frontend web with Vite
+2. Bundle frontend web with Vite
 
 **NOTE**: Please make sure to update the token icon under `web/public/` with the specific ERC20 token icon. The file must be named `token.png`. We recommend the image dimensions to be 128px x 128px.
 
@@ -54,13 +54,13 @@ make build-backend
 
 ## Usage
 
-**Use private key to fund users**
+**Use a private key**
 
 ```bash
 make run FLAGS="-httpport 8080 -wallet.provider http://localhost:8545 -wallet.privkey privkey"
 ```
 
-**Use keystore to fund users**
+**Use a keystore**
 
 ```bash
 make run FLAGS="-httpport 8080 -wallet.provider http://localhost:8545 -wallet.keyjson keystore -wallet.keypass password.txt"
@@ -76,15 +76,17 @@ Below is a list of environment variables that can be configured.
 - `HCAPTCHA_SECRET`: hCaptcha secret.
 - `ERC20_TOKEN_ADDRESS`: Contract address of the ERC20 token on the configured network, defaults to contract address for Lisk ERC20 tokens on Lisk Sepolia.
 
-You can configure the funder by setting any of the following environment variable instead of command-line flags:
+You can configure the funding account by using environment variables instead of command-line flags:
 ```bash
-export PRIVATE_KEY=<hex-private-key>
+export WEB3_PROVIDER=rpc_endpoint
+export PRIVATE_KEY=hex-private-key
 ```
 
 or
 
 ```bash
-export KEYSTORE=<keystore-path>
+export WEB3_PROVIDER=rpc_endpoint
+export KEYSTORE=keystore_path
 echo "your keystore password" > `pwd`/password.txt
 ```
 
@@ -124,7 +126,6 @@ Set the appropriate configuration in `.env` file and run the following command t
 
 ```bash
 make docker-start
-
 ```
 
 ## License
