@@ -139,17 +139,16 @@
         <div class="container wrapper">
           <div class="navbar-brand">
             <a class="navbar-item" href="../..">
-              <span class="icon">
+              <span class="icon logo">
                 <img src="../faucet-logo.svg" alt="logo" />
               </span>
-              <span><b>{faucetInfo.symbol} Faucet</b></span>
             </a>
           </div>
           <div id="navbarMenu" class="navbar-menu">
             <div class="navbar-end">
               <span class="navbar-item">
                 <a
-                  class="button is-white is-outlined"
+                  class="button is-white is-outlined br-0"
                   href="https://github.com/liskhq/lsk-faucet"
                 >
                   <span class="icon">
@@ -180,7 +179,7 @@
               <p class="control is-expanded m-0">
                 <input
                   bind:value={input}
-                  class="input address-search p-12"
+                  class="input address-search p-12 br-0"
                   type="text"
                   placeholder="Enter your address or ENS name"
                 />
@@ -188,7 +187,7 @@
               <p class="control">
                 <button
                   on:click={handleRequest}
-                  class="button is-secondary is-rounded text-black request-btn"
+                  class="button is-secondary text-black request-btn br-0"
                 >
                   Request
                 </button>
@@ -215,8 +214,7 @@
 
 <style>
   .hero.is-info {
-    background: url('/faucet-bg.png') no-repeat center center fixed;
-    background-color: #0c152e;
+    background-color: #0c0c0c;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -240,6 +238,10 @@
   .navbar-item > .icon {
     margin-right: 8px;
   }
+  .icon.logo {
+    width: 92px;
+    height: 32px;
+  }
   .hero-body .title {
     margin: 0;
   }
@@ -248,13 +250,12 @@
     padding: 0;
   }
   .address-search {
-    border-radius: 8px 0px 0px 8px;
-    background: #121a33;
-    color: #f9fafb;
-    border-color: transparent;
+    border: 1px solid #27272a !important;
+    background: #0c0c0c;
+    color: #9ca3af;
   }
   .address-search::placeholder {
-    color: #f9fafb;
+    color: #9ca3af;
   }
   .m-0 {
     margin: 0;
@@ -262,15 +263,22 @@
   .p-12 {
     padding: 12px;
   }
+  .br-0 {
+    border-radius: 0px;
+  }
   .is-secondary {
-    background-color: #2bd67b;
+    background-color: #ffffff;
+    opacity: 0.7;
   }
   .text-black {
-    color: #110b31;
+    color: #000000;
   }
   .request-btn {
-    border-radius: 0px 8px 8px 0px;
     border: none;
+  }
+  .is-grouped {
+    display: flex;
+    gap: 12px; 
   }
   .container-position {
     max-width: 65%;
@@ -280,10 +288,14 @@
     font-size: 16px;
     line-height: 22px;
     margin-top: 4px;
+    vertical-align: middle;
+  }
+  .feedback span {
+    display: flex;
+    justify-content: center;
   }
   .feedback img {
     margin-right: 8px;
-    vertical-align: bottom;
   }
   .feedback .success {
     color: #2bd67b;
@@ -293,6 +305,6 @@
     color: #fec84b;
   }
   .feedback .error {
-    color: #f04437;
+    color: #cf462c;
   }
 </style>
