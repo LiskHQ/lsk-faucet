@@ -139,10 +139,9 @@
         <div class="container wrapper">
           <div class="navbar-brand">
             <a class="navbar-item" href="../..">
-              <span class="icon">
+              <span class="icon logo">
                 <img src="../faucet-logo.svg" alt="logo" />
               </span>
-              <span><b>{faucetInfo.symbol} Faucet</b></span>
             </a>
           </div>
           <div id="navbarMenu" class="navbar-menu">
@@ -238,6 +237,10 @@
   }
   .navbar-item > .icon {
     margin-right: 8px;
+  }
+  .icon.logo {
+    width: 92px;
+    height: 32px;
   }
   .hero-body .title {
     margin: 0;
